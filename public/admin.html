@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>SA 역량 진단 · 관리자</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <script src="/assets/vendor/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar no-print">
+    <div class="wrap topbar-in">
+      <div class="brand">
+        <div class="brand-mark">AD</div>
+        <div>
+          <div class="brand-title" id="appTitle"></div>
+          <div class="brand-sub">관리자 · 팀 역량 히트맵</div>
+        </div>
+      </div>
+      <div class="actions" id="adminActions" hidden>
+        <button class="btn btn-dark" id="btnRefresh">새로고침</button>
+        <button class="btn btn-primary" id="btnPrintAll">전체 리포트 PDF</button>
+        <button class="btn btn-ghost" id="btnLogout">로그아웃</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap no-print" id="viewLogin" hidden>
+    <div class="login-card card">
+      <h1 class="login-title">관리자 로그인</h1>
+      <p class="muted">관리자 비밀번호를 입력하세요.</p>
+      <form id="loginForm">
+        <label class="field"><span>비밀번호</span><input id="inPw" type="password" required /></label>
+        <div class="form-msg" id="loginMsg"></div>
+        <button class="btn btn-primary btn-block" id="btnLogin" type="submit">로그인</button>
+      </form>
+    </div>
+  </main>
+
+  <main class="wrap stack no-print" id="viewDash" hidden>
+    <section class="banner">
+      <div>
+        <span class="pill pill-indigo">팀 역량 현황</span>
+        <h2 class="banner-title">누구에게, 무엇을, 어떤 방식으로 먼저 개발할지 확인하세요</h2>
+        <p class="banner-sub">Gap이 클수록 먼저 개발해야 할 항목입니다. 현재 점수 4~5점인 사람은 사내 멘토 후보입니다.</p>
+      </div>
+      <div class="banner-kpis" id="teamKpis"></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h3 class="card-title">팀 히트맵</h3>
+        <div class="row-gap">
+          <div class="seg" id="modeSeg">
+            <button data-mode="gap" class="on">Gap (학습 우선순위)</button>
+            <button data-mode="cur">현재 점수</button>
+          </div>
+          <div class="legend" id="legend"></div>
+        </div>
+      </div>
+      <div class="scroll-x pad-s"><div id="heatWrap"></div></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h3 class="card-title">팀 학습 우선순위</h3>
+        <span class="muted small">팀 평균 Gap 순 · 권장 방식은 평균 Gap과 멘토 후보 수로 판단합니다</span>
+      </div>
+      <div class="scroll-x"><table class="tbl" id="teamPrio"></table></div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h3 class="card-title">참여자</h3>
+        <span class="muted small" id="userCount"></span>
+      </div>
+      <div class="scroll-x"><table class="tbl" id="userTable"></table></div>
+    </section>
+
+    <section class="card pad" id="userReportCard" hidden>
+      <div class="toolbar" style="margin-bottom:12px">
+        <h3 class="card-title" style="margin:0">개인 리포트</h3>
+        <button class="btn btn-ghost btn-sm" id="btnCloseReport">닫기</button>
+      </div>
+      <div id="userReport"></div>
+    </section>
+  </main>
+
+  <div id="printArea" class="print-only"></div>
+
+  <script src="/assets/items.js"></script>
+  <script src="/assets/core.js"></script>
+  <script src="/assets/admin.js"></script>
+</body>
+</html>

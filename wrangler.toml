@@ -1,0 +1,12 @@
+name = "se-competency"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "./public"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "se-competency"
+# 'npx wrangler d1 create se-competency' 실행 후 출력되는 database_id로 교체하세요.
+database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+
+# 어드민 비밀번호는 여기에 쓰지 말고 Cloudflare 대시보드
+# (Pages 프로젝트 > Settings > Variables and Secrets)에 ADMIN_PASSWORD 로 등록하세요.

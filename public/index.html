@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SA 역량 진단</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <script src="/assets/vendor/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar no-print">
+    <div class="wrap topbar-in">
+      <div class="brand">
+        <div class="brand-mark">SA</div>
+        <div>
+          <div class="brand-title" id="appTitle"></div>
+          <div class="brand-sub" id="appSub"></div>
+        </div>
+      </div>
+      <div class="actions" id="userActions" hidden>
+        <span class="who" id="whoName"></span>
+        <span class="save-state" id="saveState"></span>
+        <button class="btn btn-dark" id="btnPrint">리포트 인쇄 / PDF</button>
+        <button class="btn btn-ghost" id="btnLogout">로그아웃</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- 로그인 -->
+  <main class="wrap no-print" id="viewLogin" hidden>
+    <div class="login-card card">
+      <h1 class="login-title">역량 진단 시작하기</h1>
+      <p class="muted">이름과 숫자 4자리 비밀번호를 입력하세요. 처음이면 입력한 정보로 등록됩니다.</p>
+      <form id="loginForm" autocomplete="off">
+        <label class="field"><span>이름</span>
+          <input id="inName" type="text" maxlength="30" placeholder="홍길동" required />
+        </label>
+        <label class="field"><span>비밀번호 (숫자 4자리)</span>
+          <input id="inPin" type="password" inputmode="numeric" pattern="\d{4}" maxlength="4" placeholder="••••" required />
+        </label>
+        <div class="form-msg" id="loginMsg"></div>
+        <div id="registerBox" class="register-box" hidden>
+          <p><b id="regName"></b> 님은 처음이시네요. 이 이름과 비밀번호로 등록할까요?<br />
+            <span class="muted small">비밀번호는 다음 로그인 때 필요하니 기억해 두세요.</span></p>
+          <div class="row-gap">
+            <button type="button" class="btn btn-primary" id="btnRegister">등록하고 시작</button>
+            <button type="button" class="btn btn-ghost" id="btnCancelReg">취소</button>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-block" id="btnLogin" type="submit">시작하기</button>
+      </form>
+    </div>
+  </main>
+
+  <!-- 진단 -->
+  <main class="wrap stack no-print" id="viewAssess" hidden>
+    <section class="banner">
+      <div>
+        <div class="row-gap">
+          <span class="pill pill-indigo">SA 역량 진단</span>
+          <span class="pill pill-green" id="progressPill">진행률: 0 / 20</span>
+        </div>
+        <h2 class="banner-title">오른쪽 평가 기준을 참고해 '현재 내 수준'을 선택하세요</h2>
+        <p class="banner-sub">선택할 때마다 자동 저장됩니다. 중요도 대비 현재 수준의 차이(Gap)로 학습 우선순위를 계산합니다.</p>
+      </div>
+      <div class="banner-kpis">
+        <div><div class="kpi-l">평균 현재 역량</div><div class="kpi-v green" id="kpiAvg">0.0<span>/ 5.0</span></div></div>
+        <div class="vline"></div>
+        <div><div class="kpi-l">평균 Gap</div><div class="kpi-v amber" id="kpiGap">0<span>점</span></div></div>
+      </div>
+    </section>
+
+    <div class="grid-2">
+      <section class="card">
+        <div class="card-head">
+          <h3 class="card-title">역량 진단표</h3>
+          <span class="muted small">Gap = (중요도 − 현재 역량) × 25</span>
+        </div>
+        <div class="scroll-x">
+          <table class="tbl assess">
+            <thead><tr><th class="w-area">역량 (중요도)</th><th>진단 항목</th><th class="c w-imp">중요도</th><th class="c w-rate">현재 내 수준 (1~5)</th><th class="c w-gap">Gap</th></tr></thead>
+            <tbody id="assessBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <aside class="stack">
+        <section class="card pad">
+          <h3 class="card-title">평가 기준</h3>
+          <div id="levelList" class="levels"></div>
+        </section>
+        <section class="card pad">
+          <h3 class="card-title">역량별 중요도 vs 현재 역량</h3>
+          <div class="chart-box"><canvas id="radar"></canvas></div>
+        </section>
+      </aside>
+    </div>
+
+    <section class="card pad">
+      <h3 class="card-title">나의 학습 우선순위 <span class="muted small">Gap 50 이상은 우선 학습 계획 수립을 권장합니다</span></h3>
+      <div id="prioList"></div>
+    </section>
+  </main>
+
+  <!-- 인쇄 전용 -->
+  <div id="printArea" class="print-only"></div>
+
+  <script src="/assets/items.js"></script>
+  <script src="/assets/core.js"></script>
+  <script src="/assets/app.js"></script>
+</body>
+</html>

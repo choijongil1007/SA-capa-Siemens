@@ -10,8 +10,7 @@ directory = "./public"
 [[d1_databases]]
 binding = "DB"
 database_name = "se-competency"
-# D1 > se-competency 개요 화면의 Database ID 로 교체하세요.
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "d77aaee8-b65e-49f9-87a9-02ddc508c546"
 
 # 어드민 비밀번호는 여기에 쓰지 말고 대시보드의 Variables and Secrets 에
 # ADMIN_PASSWORD (Secret) 로 등록하세요.

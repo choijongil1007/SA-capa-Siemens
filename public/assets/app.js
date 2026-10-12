@@ -21,6 +21,51 @@
     $("viewLogin").hidden = view !== "login";
     $("viewAssess").hidden = view !== "assess";
     $("userActions").hidden = view !== "assess";
+    $("viewAdmin").hidden = view !== "admin";
+    $("adminActions").hidden = view !== "admin";
+  }
+
+  // ── 관리자 (이름에 admin 입력) ─────────────
+  const ADMIN_KEY = "sa_admin_token"; // admin.js 와 같은 키 (탭을 닫으면 사라짐)
+  const isAdminName = n => n.trim().toLowerCase() === "admin";
+
+  function adminToken(val) {
+    try {
+      if (val === undefined) return sessionStorage.getItem(ADMIN_KEY);
+      if (val) sessionStorage.setItem(ADMIN_KEY, val); else sessionStorage.removeItem(ADMIN_KEY);
+    } catch { /* 무시 */ }
+    return null;
+  }
+
+  function syncLoginMode() {
+    const admin = isAdminName($("inName").value);
+    const pin = $("inPin");
+    $("pinLabel").textContent = admin ? "관리자 비밀번호" : "비밀번호 (숫자 4자리)";
+    pin.type = "password";
+    if (admin) { pin.removeAttribute("maxlength"); pin.removeAttribute("pattern"); pin.inputMode = "text"; pin.placeholder = ""; }
+    else { pin.maxLength = 4; pin.pattern = "\\d{4}"; pin.inputMode = "numeric"; pin.placeholder = "••••"; }
+  }
+
+  async function doAdminLogin(password) {
+    $("loginMsg").textContent = "";
+    $("btnLogin").disabled = true;
+    try {
+      const data = await api("/api/admin/login", { method: "POST", body: { password } });
+      adminToken(data.token);
+      $("inPin").value = "";
+      show("admin");
+    } catch (e) {
+      $("loginMsg").textContent = e.message;
+    } finally {
+      $("btnLogin").disabled = false;
+    }
+  }
+
+  function adminLogout() {
+    adminToken(null);
+    $("inName").value = ""; $("inPin").value = "";
+    syncLoginMode();
+    show("login");
   }
 
   // ── 로그인 ──────────────────────────────
@@ -28,6 +73,7 @@
     const name = $("inName").value.trim();
     const pin = $("inPin").value.trim();
     $("loginMsg").textContent = "";
+    if (isAdminName(name)) return pin ? doAdminLogin($("inPin").value) : ($("loginMsg").textContent = "관리자 비밀번호를 입력해 주세요.");
     if (!name) return ($("loginMsg").textContent = "이름을 입력해 주세요.");
     if (!/^\d{4}$/.test(pin)) return ($("loginMsg").textContent = "비밀번호는 숫자 4자리입니다.");
     $("btnLogin").disabled = true;
@@ -155,13 +201,20 @@
     $("loginForm").addEventListener("submit", e => { e.preventDefault(); doLogin(false); });
     $("btnRegister").addEventListener("click", () => doLogin(true));
     $("btnCancelReg").addEventListener("click", resetRegister);
-    $("inName").addEventListener("input", resetRegister);
+    $("inName").addEventListener("input", () => { resetRegister(); syncLoginMode(); });
+    $("btnAdminLogout").addEventListener("click", adminLogout);
     $("btnLogout").addEventListener("click", () => logout());
     $("btnPrint").addEventListener("click", printReport);
     $("assessBody").addEventListener("click", e => {
       const b = e.target.closest(".rate");
       if (b) setScore(b.dataset.id, Number(b.dataset.v));
     });
+
+    const at = adminToken();
+    if (at) {
+      try { await api("/api/admin/users", { token: at }); return show("admin"); }
+      catch { adminToken(null); }
+    }
 
     token = store(true);
     if (token) {

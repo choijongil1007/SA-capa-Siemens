@@ -12,6 +12,7 @@ export async function onRequestPost({ request, env }) {
   const pin = String(body.pin || "");
 
   if (!name || name.length > 30) return error("이름을 1~30자로 입력해 주세요.");
+  if (name.toLowerCase() === "admin") return error("admin은 관리자 전용 이름입니다. 다른 이름을 사용해 주세요.");
   if (!isValidPin(pin)) return error("비밀번호는 숫자 4자리입니다.");
 
   const db = env.DB;

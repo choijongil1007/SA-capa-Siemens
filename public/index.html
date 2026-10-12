@@ -18,6 +18,11 @@
           <div class="brand-sub" id="appSub"></div>
         </div>
       </div>
+      <div class="actions" id="adminActions" hidden>
+        <span class="who">관리자</span>
+        <a class="btn btn-primary" id="menuAdmin" href="/admin">Admin</a>
+        <button class="btn btn-ghost" id="btnAdminLogout">로그아웃</button>
+      </div>
       <div class="actions" id="userActions" hidden>
         <span class="who" id="whoName"></span>
         <span class="save-state" id="saveState"></span>
@@ -31,12 +36,12 @@
   <main class="wrap no-print" id="viewLogin" hidden>
     <div class="login-card card">
       <h1 class="login-title">역량 진단 시작하기</h1>
-      <p class="muted">이름과 숫자 4자리 비밀번호를 입력하세요. 처음이면 입력한 정보로 등록됩니다.</p>
+      <p class="muted">이름과 숫자 4자리 비밀번호를 입력하세요. 처음이면 입력한 정보로 등록됩니다.<br />관리자는 이름에 <b>admin</b>을 입력하세요.</p>
       <form id="loginForm" autocomplete="off">
         <label class="field"><span>이름</span>
           <input id="inName" type="text" maxlength="30" placeholder="홍길동" required />
         </label>
-        <label class="field"><span>비밀번호 (숫자 4자리)</span>
+        <label class="field"><span id="pinLabel">비밀번호 (숫자 4자리)</span>
           <input id="inPin" type="password" inputmode="numeric" pattern="\d{4}" maxlength="4" placeholder="••••" required />
         </label>
         <div class="form-msg" id="loginMsg"></div>
@@ -50,6 +55,15 @@
         </div>
         <button class="btn btn-primary btn-block" id="btnLogin" type="submit">시작하기</button>
       </form>
+    </div>
+  </main>
+
+  <!-- 관리자 -->
+  <main class="wrap no-print" id="viewAdmin" hidden>
+    <div class="login-card card">
+      <h1 class="login-title">관리자로 로그인되었습니다</h1>
+      <p class="muted">위쪽 <b>Admin</b> 메뉴 또는 아래 버튼으로 관리자 화면에 들어갈 수 있습니다.</p>
+      <a class="btn btn-primary btn-block" href="/admin" style="display:block;text-align:center;text-decoration:none">관리자 화면 열기</a>
     </div>
   </main>
 

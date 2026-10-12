@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>SA 역량 진단 · 팀 통계</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <link rel="stylesheet" href="/assets/style.css" />
+  <script src="/assets/vendor/chart.umd.min.js"></script>
+</head>
+<body>
+  <header class="topbar no-print">
+    <div class="wrap topbar-in">
+      <div class="brand">
+        <div class="brand-mark">SA</div>
+        <div>
+          <div class="brand-title" id="appTitle"></div>
+          <div class="brand-sub">팀 통계 · 이름 없이 집계된 결과</div>
+        </div>
+      </div>
+      <div class="actions">
+        <a class="btn btn-dark" id="linkBack" href="/">내 진단</a>
+        <button class="btn btn-ghost" id="btnPrint">인쇄 / PDF</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap stack" id="viewTeam" hidden>
+    <section class="banner">
+      <div>
+        <span class="pill pill-indigo">팀 통계</span>
+        <h2 class="banner-title">우리 팀이 함께 키워야 할 역량은 무엇일까요?</h2>
+        <p class="banner-sub">개인의 이름과 점수는 표시되지 않습니다. 참여자가 <b id="minN">3</b>명 이상일 때만 집계가 나타납니다.</p>
+      </div>
+      <div class="banner-kpis" id="teamKpis"></div>
+    </section>
+
+    <div id="notReady" class="card pad" hidden></div>
+
+    <div id="teamBody">
+      <section class="card pad">
+        <h3 class="card-title">역량별 중요도 vs 팀 평균</h3>
+        <div class="chart-box"><canvas id="radar"></canvas></div>
+      </section>
+
+      <section class="card" style="margin-top:16px">
+        <div class="card-head">
+          <h3 class="card-title">팀 학습 우선순위</h3>
+          <span class="muted small">팀 평균 Gap 순 · 권장 방식은 평균 Gap과 멘토 후보 수로 판단합니다</span>
+        </div>
+        <div class="scroll-x"><table class="tbl" id="teamPrio"></table></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="/assets/items.js"></script>
+  <script src="/assets/core.js"></script>
+  <script src="/assets/team.js"></script>
+</body>
+</html>

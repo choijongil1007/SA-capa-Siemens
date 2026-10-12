@@ -1,5 +1,6 @@
 // Workers 진입점: /api/* 를 기존 handler 모듈로 연결합니다. (정적 파일은 assets가 먼저 처리)
 import * as login from "../functions/api/login.js";
+import * as team from "../functions/api/team.js";
 import * as me from "../functions/api/me.js";
 import * as adminLogin from "../functions/api/admin/login.js";
 import * as adminUsers from "../functions/api/admin/users/index.js";
@@ -9,6 +10,7 @@ const METHODS = { GET: "onRequestGet", POST: "onRequestPost", PUT: "onRequestPut
 
 function route(pathname) {
   if (pathname === "/api/login") return [login, {}];
+  if (pathname === "/api/team") return [team, {}];
   if (pathname === "/api/me") return [me, {}];
   if (pathname === "/api/admin/login") return [adminLogin, {}];
   if (pathname === "/api/admin/users") return [adminUsers, {}];

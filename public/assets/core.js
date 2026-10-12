@@ -53,6 +53,21 @@
     };
   }
 
+  // 권장 학습 방식 (관리자 화면과 팀 통계 화면 공통)
+  function recommend(avgGap, mentorCount, highGapPeople) {
+    if (avgGap === null || avgGap === undefined) return { label: "-", cls: "" };
+    if (avgGap >= 50 && mentorCount === 0) return { label: "팀 교육", cls: "warn" };
+    if (avgGap >= 25 && mentorCount > 0) return { label: "사내 멘토링", cls: "" };
+    if (avgGap >= 25) return { label: "팀 교육", cls: "warn" };
+    if (highGapPeople > 0) return { label: "개인 코칭", cls: "" };
+    return { label: "유지", cls: "" };
+  }
+
+  // /api/team 응답(team)에서 값 꺼내기. 인원이 부족해 숨겨진 값은 null
+  const teamOn = team => !!(team && team.ready);
+  const teamArea = (team, id) => { const a = teamOn(team) && team.areas.find(x => x.id === id); return a && !a.hidden ? a : null; };
+  const teamItem = (team, id) => { const i = teamOn(team) && team.items[id]; return i && !i.hidden ? i : null; };
+
   function gapClass(gap) {
     if (gap === null || gap === undefined) return "g-none";
     if (gap >= 75) return "g-75";
@@ -74,7 +89,7 @@
     return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
   }
 
-  function drawRadar(canvas, stats) {
+  function drawRadar(canvas, stats, team) {
     if (!window.Chart) return null;
     return new Chart(canvas.getContext("2d"), {
       type: "radar",
@@ -87,6 +102,8 @@
           { label: "현재 역량", data: stats.areas.map(a => +a.avgCurrent.toFixed(2)),
             borderColor: "#059669", backgroundColor: "rgba(16,185,129,0.22)",
             pointBackgroundColor: "#059669", borderWidth: 2 },
+          ...(teamOn(team) ? [{ label: "팀 평균", data: stats.areas.map(a => { const t = teamArea(team, a.id); return t ? +t.avgCur.toFixed(2) : null; }),
+            borderColor: "#f59e0b", backgroundColor: "rgba(245,158,11,0.06)", borderDash: [2, 3], borderWidth: 2, pointBackgroundColor: "#f59e0b", pointRadius: 3 }] : []),
         ],
       },
       options: {
@@ -100,7 +117,7 @@
 
   // 개인 리포트 (사용자 '내 리포트'와 어드민 인쇄에서 공통 사용)
   // 인쇄용: 화면에 보이지 않는 영역에서도 그려지도록 고정 크기 캔버스로 그린 뒤 이미지로 바꿉니다.
-  function radarImage(stats) {
+  function radarImage(stats, team) {
     if (!window.Chart) return "";
     const canvas = document.createElement("canvas");
     canvas.width = 900; canvas.height = 560;
@@ -113,6 +130,8 @@
             backgroundColor: "rgba(99,102,241,0.08)", borderDash: [8, 8], borderWidth: 3, pointBackgroundColor: "#6366f1", pointRadius: 5 },
           { label: "현재 역량", data: stats.areas.map(a => +a.avgCurrent.toFixed(2)), borderColor: "#059669",
             backgroundColor: "rgba(16,185,129,0.22)", borderWidth: 4, pointBackgroundColor: "#059669", pointRadius: 5 },
+          ...(teamOn(team) ? [{ label: "팀 평균", data: stats.areas.map(a => { const t = teamArea(team, a.id); return t ? +t.avgCur.toFixed(2) : null; }),
+            borderColor: "#f59e0b", backgroundColor: "rgba(245,158,11,0.06)", borderDash: [2, 3], borderWidth: 4, pointBackgroundColor: "#f59e0b", pointRadius: 5 }] : []),
         ],
       },
       options: {
@@ -127,7 +146,8 @@
     return url;
   }
 
-  function renderReport(el, user, { topN = 5, asImage = false } = {}) {
+  function renderReport(el, user, { topN = 5, asImage = false, team = null } = {}) {
+    const tOn = teamOn(team);
     const st = analyze(user.scores);
     const top = st.priorities.slice(0, topN);
     el.innerHTML = `
@@ -147,16 +167,17 @@
         <div class="report-grid">
           <div class="card pad">
             <h3 class="card-title">역량별 중요도 vs 현재 역량</h3>
-            ${asImage ? `<img class="radar-img" alt="역량별 중요도와 현재 역량 방사형 차트" src="${radarImage(st)}" />`
+            ${asImage ? `<img class="radar-img" alt="역량별 중요도와 현재 역량 방사형 차트" src="${radarImage(st, team)}" />`
                       : `<div class="chart-box"><canvas></canvas></div>`}
           </div>
           <div class="card pad">
             <h3 class="card-title">역량별 요약</h3>
             <table class="tbl">
-              <thead><tr><th>역량</th><th class="c">중요도</th><th class="c">현재</th><th class="c">평균 Gap</th></tr></thead>
+              <thead><tr><th>역량</th><th class="c">중요도</th><th class="c">현재</th>${tOn ? '<th class="c">팀 평균</th>' : ""}<th class="c">평균 Gap</th></tr></thead>
               <tbody>${st.areas.map(a => `
                 <tr><td>${esc(a.name)}</td><td class="c">${a.weight}</td>
                 <td class="c">${a.avgCurrent ? a.avgCurrent.toFixed(1) : "-"}</td>
+                ${tOn ? `<td class="c muted">${teamArea(team, a.id) ? teamArea(team, a.id).avgCur.toFixed(1) : "-"}</td>` : ""}
                 <td class="c"><span class="gap-chip ${gapClass(a.avgGap === null ? null : Math.round(a.avgGap))}">${a.avgGap === null ? "-" : Math.round(a.avgGap)}</span></td></tr>`).join("")}
               </tbody>
             </table>
@@ -171,14 +192,14 @@
                 <span class="prio-name">${esc(it.name)}</span>
                 <span class="gap-chip ${gapClass(it.gap)}">Gap ${it.gap}</span>
               </div>
-              <div class="prio-meta">${esc(it.area.name)} · 중요도 ${it.importance} · 현재 ${it.current}점 · ${esc(linkText(it))}</div>
+              <div class="prio-meta">${esc(it.area.name)} · 중요도 ${it.importance} · 현재 ${it.current}점${teamItem(team, it.id) ? ` (팀 평균 ${teamItem(team, it.id).avgCur.toFixed(1)})` : ""} · ${esc(linkText(it))}</div>
               <div class="prio-advice"><b>추천 실행 목표</b> ${esc(it.advice)}</div>
             </li>`).join("")}</ol>`
             : `<p class="muted">${st.rated ? "모든 항목이 중요도 수준에 도달했습니다." : "아직 진단을 시작하지 않았습니다."}</p>`}
         </div>
       </div>`;
-    return asImage ? null : drawRadar(el.querySelector("canvas"), st);
+    return asImage ? null : drawRadar(el.querySelector("canvas"), st, team);
   }
 
-  window.Core = { api, analyze, gapOf, gapClass, linkText, esc, fmtDate, drawRadar, renderReport, ALL_ITEMS, TOTAL };
+  window.Core = { api, analyze, gapOf, gapClass, recommend, teamOn, teamArea, teamItem, linkText, esc, fmtDate, drawRadar, renderReport, ALL_ITEMS, TOTAL };
 })();

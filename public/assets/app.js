@@ -187,8 +187,10 @@
     $("loginMsg").textContent = typeof msg === "string" ? msg : "";
   }
 
-  function printReport() {
-    renderReport($("printArea"), user, { asImage: true });
+  async function printReport() {
+    let team = null; // 3명 미만이면 ready:false 로 오고, 비교 열 없이 출력됩니다.
+    try { team = await api("/api/team", { token }); } catch { /* 비교 없이 출력 */ }
+    renderReport($("printArea"), user, { asImage: true, team });
     setTimeout(() => window.print(), 200);
   }
 

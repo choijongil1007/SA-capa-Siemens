@@ -219,3 +219,4 @@ main.wrap { padding-top: 24px; padding-bottom: 40px; }
   .page .tbl td, .page .tbl th { padding: 5px 6px; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+a.btn { display: inline-block; text-decoration: none; }

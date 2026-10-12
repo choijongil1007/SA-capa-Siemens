@@ -6,6 +6,7 @@
 
   let token = null;
   let users = [];
+  let team = null; // /api/team 집계 (개인 리포트의 팀 평균 비교용)
   let mode = "gap";
   let reportChart = null;
 
@@ -36,7 +37,7 @@
       const avgGap = gaps.length ? gaps.reduce((a, b) => a + b, 0) / gaps.length : null;
       const mentors = per.filter(p => (Number(p.user.scores[it.id]) || 0) >= 4).map(p => p.user.name);
       const highGapPeople = gaps.filter(g => g >= 50).length;
-      return { ...it, n: vals.length, dist, avgCur, avgGap, mentors, highGapPeople, method: method(avgGap, mentors.length, highGapPeople) };
+      return { ...it, n: vals.length, dist, avgCur, avgGap, mentors, highGapPeople, method: Core.recommend(avgGap, mentors.length, highGapPeople) };
     });
     const started = per.filter(p => p.st.rated > 0);
     return {
@@ -45,15 +46,6 @@
       avgCur: started.length ? started.reduce((s, p) => s + p.st.avgCurrent, 0) / started.length : 0,
       avgGap: started.length ? started.reduce((s, p) => s + p.st.avgGap, 0) / started.length : 0,
     };
-  }
-
-  function method(avgGap, mentorCount, highGapPeople) {
-    if (avgGap === null) return { label: "-", cls: "" };
-    if (avgGap >= 50 && mentorCount === 0) return { label: "팀 교육", cls: "warn" };
-    if (avgGap >= 25 && mentorCount > 0) return { label: "사내 멘토링", cls: "" };
-    if (avgGap >= 25) return { label: "팀 교육", cls: "warn" };
-    if (highGapPeople > 0) return { label: "개인 코칭", cls: "" };
-    return { label: "유지", cls: "" };
   }
 
   // ── 렌더링 ──────────────────────────────
@@ -163,6 +155,7 @@
     try {
       const data = await api("/api/admin/users", { token });
       users = data.users;
+      try { team = await api("/api/team", { token }); } catch { team = null; }
       show("dash");
       render();
     } catch (e) {
@@ -176,7 +169,7 @@
     if (!u) return;
     if (reportChart) reportChart.destroy();
     $("userReportCard").hidden = false;
-    reportChart = renderReport($("userReport"), u);
+    reportChart = renderReport($("userReport"), u, { team });
     $("userReportCard").scrollIntoView({ behavior: "smooth" });
   }
 
@@ -224,7 +217,7 @@
       </section>`];
     users.forEach((u, i) => pages.push(`<section class="page" data-u="${i}"></section>`));
     area.innerHTML = pages.join("");
-    users.forEach((u, i) => renderReport(area.querySelector(`[data-u="${i}"]`), u, { asImage: true }));
+    users.forEach((u, i) => renderReport(area.querySelector(`[data-u="${i}"]`), u, { asImage: true, team }));
     setTimeout(() => window.print(), 300);
   }
 

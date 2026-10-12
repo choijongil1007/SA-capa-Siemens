@@ -53,7 +53,7 @@
       const data = await api("/api/admin/login", { method: "POST", body: { password } });
       adminToken(data.token);
       $("inPin").value = "";
-      show("admin");
+      location.href = "/admin"; // 중간 화면 없이 바로 관리자 화면으로 이동
     } catch (e) {
       $("loginMsg").textContent = e.message;
     } finally {

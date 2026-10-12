@@ -227,8 +227,10 @@
   async function logout(msg) {
     store(false, null);
     token = null; users = [];
+    // 직접 로그아웃하면 첫 로그인 화면으로 이동, 세션 만료 등은 관리자 로그인 화면에 메시지 표시
+    if (typeof msg !== "string") { location.href = "/"; return; }
     show("login");
-    $("loginMsg").textContent = typeof msg === "string" ? msg : "";
+    $("loginMsg").textContent = msg;
   }
 
   document.addEventListener("DOMContentLoaded", () => {

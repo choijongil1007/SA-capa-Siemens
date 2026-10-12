@@ -110,22 +110,26 @@
       <tbody>${rows}${avgRow}</tbody></table>`;
   }
 
+  const MENTOR_SHOW = 3;
+
+  function mentorHtml(names) {
+    if (!names.length) return '<span class="muted">없음</span>';
+    const shown = names.slice(0, MENTOR_SHOW).map(n => `<span class="tag">${esc(n)}</span>`).join("");
+    const rest = names.length - MENTOR_SHOW;
+    return shown + (rest > 0 ? `<span class="tag" title="${esc(names.join(", "))}">+${rest}명</span>` : "");
+  }
+
   function teamPrioHtml(ts, limit) {
     const list = ts.items.filter(i => i.n).sort((a, b) => b.avgGap - a.avgGap || b.importance - a.importance).slice(0, limit);
     if (!list.length) return `<tbody><tr><td class="muted">진단 결과가 쌓이면 표시됩니다.</td></tr></tbody>`;
     const linkHead = window.EDITION === "siemens" ? "영향받는 SVS 단계" : "연결 교재";
-    return `<thead><tr><th>#</th><th>진단 항목</th><th>역량</th><th class="c">중요도</th><th class="c nowrap">팀 평균</th><th class="c nowrap">평균 Gap</th><th class="c nowrap dist-col">분포 (1→5점)</th><th>멘토 후보 (4~5점)</th><th class="c">권장 방식</th><th>${linkHead}</th></tr></thead>
+    return `<thead><tr><th>진단 항목</th><th class="c nowrap">중요도 → 팀 평균 · Gap</th><th>멘토 후보 (4~5점)</th><th class="c">권장 방식</th><th>${linkHead}</th></tr></thead>
       <tbody>${list.map((it, i) => {
-        const max = Math.max(1, ...it.dist);
+        const distTip = it.dist.map((d, k) => `${k + 1}점 ${d}명`).join(", ");
         return `<tr>
-          <td class="c">${i + 1}</td>
-          <td class="item-col">${esc(it.name)}</td>
-          <td class="nowrap">${esc(it.area.name)}</td>
-          <td class="c">${it.importance}</td>
-          <td class="c">${it.avgCur.toFixed(1)}</td>
-          <td class="c"><span class="gap-chip ${gapClass(Math.round(it.avgGap))}">${Math.round(it.avgGap)}</span></td>
-          <td class="c dist-col"><span class="dist" title="${it.dist.map((d, k) => `${k + 1}점 ${d}명`).join(", ")}">${it.dist.map(d => `<i style="height:${Math.max(2, (d / max) * 26)}px"></i>`).join("")}</span></td>
-          <td class="mentor">${it.mentors.length ? it.mentors.map(n => `<span class="tag">${esc(n)}</span>`).join("") : '<span class="muted">없음</span>'}</td>
+          <td class="item-col"><span class="rank">${i + 1}</span>${esc(it.name)}<div class="muted small">${esc(it.area.name)}</div></td>
+          <td class="c nowrap">${it.importance} → ${it.avgCur.toFixed(1)} <span class="gap-chip ${gapClass(Math.round(it.avgGap))}" title="${esc(distTip)}">${Math.round(it.avgGap)}</span></td>
+          <td class="mentor">${mentorHtml(it.mentors)}</td>
           <td class="c"><span class="tag ${it.method.cls}">${it.method.label}</span></td>
           <td class="small">${esc(window.EDITION === "siemens" ? it.svs : it.base)}</td>
         </tr>`;

@@ -161,6 +161,7 @@ main.wrap { padding-top: 24px; padding-bottom: 40px; }
 .dist { display: inline-flex; gap: 2px; align-items: flex-end; height: 26px; }
 .dist i { display: block; width: 9px; background: #a5b4fc; border-radius: 2px 2px 0 0; }
 .mentor { font-size: 12px; }
+.rank { display: inline-block; min-width: 18px; margin-right: 6px; font-weight: 700; color: var(--ink2); }
 .nowrap { white-space: nowrap; }
 .tag { display: inline-block; white-space: nowrap; font-size: 11px; padding: 1px 7px; border-radius: 99px; background: #f1f5f9; color: var(--ink2); margin: 1px 2px; }
 .tag.warn { background: #ffe4e6; color: #9f1239; }

@@ -220,3 +220,19 @@ main.wrap { padding-top: 24px; padding-bottom: 40px; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 a.btn { display: inline-block; text-decoration: none; }
+
+/* 팀 통계: 내 점수 · 팀 평균 · 목표 비교 */
+.cmp-guide { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding: 10px 20px; border-bottom: 1px solid var(--line2); font-size: 12px; color: var(--ink2); }
+.cmp-key { display: inline-flex; align-items: center; gap: 6px; }
+.cmp-col { min-width: 230px; }
+.cmp-nums { display: flex; gap: 14px; }
+.cmp-n small { display: block; font-size: 10px; color: #94a3b8; font-weight: 600; }
+.cmp-n b { font-size: 15px; }
+.cmp-n .me-n { color: #047857; } .cmp-n .team-n { color: #b45309; }
+.cmp-track { position: relative; height: 8px; margin: 9px 6px 3px; background: #e2e8f0; border-radius: 99px; }
+.cmp-track .dot, .cmp-track .tick { position: absolute; top: 50%; transform: translate(-50%, -50%); }
+.dot { display: inline-block; width: 11px; height: 11px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(15,23,42,.15); }
+.dot.me { background: #059669; } .dot.team { background: #f59e0b; }
+.tick { display: inline-block; width: 3px; height: 16px; border-radius: 2px; background: #6366f1; }
+.cmp-guide .tick { height: 12px; }
+@media print { .cmp-col { min-width: 0; } }

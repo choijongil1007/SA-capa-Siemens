@@ -40,14 +40,23 @@
 
     <div id="teamBody">
       <section class="card pad">
-        <h3 class="card-title">역량별 중요도 vs 팀 평균</h3>
+        <h3 class="card-title">역량별 중요도 · 내 점수 · 팀 평균</h3>
         <div class="chart-box"><canvas id="radar"></canvas></div>
       </section>
 
       <section class="card" style="margin-top:16px">
         <div class="card-head">
-          <h3 class="card-title">팀 학습 우선순위</h3>
-          <span class="muted small">팀 평균 Gap 순 · 권장 방식은 평균 Gap과 멘토 후보 수로 판단합니다</span>
+          <h3 class="card-title">항목별 내 점수 vs 팀 평균</h3>
+          <div class="seg" id="sortSeg" hidden>
+            <button data-sort="team" class="on">팀 Gap 큰 순</button>
+            <button data-sort="mine">내 Gap 큰 순</button>
+          </div>
+        </div>
+        <div class="cmp-guide">
+          <span class="cmp-key"><i class="dot me"></i>내 점수</span>
+          <span class="cmp-key"><i class="dot team"></i>팀 평균</span>
+          <span class="cmp-key"><i class="tick"></i>목표 (이 역할에 필요한 수준, 중요도)</span>
+          <span class="muted small">Gap = (목표 − 점수) × 25 · 클수록 먼저 키워야 할 항목</span>
         </div>
         <div class="scroll-x"><table class="tbl" id="teamPrio"></table></div>
       </section>

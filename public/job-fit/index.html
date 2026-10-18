@@ -1,0 +1,789 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IT·SW·AI 직무 적합성 진단</title>
+<meta name="description" content="IT/SW/AI 기업의 직무를 이해하고, 나에게 맞는 직무를 Self-Assessment 로 찾아보는 세미나 실습 앱">
+<style>
+:root {
+  --navy: #0b2a4a; --navy2: #0f5394; --blue: #1e66b3; --blue-weak: #e8f1fb;
+  --teal: #14b8a6; --teal-dark: #0f8f82;
+  --bg: #f3f6fa; --card: #fff; --line: #dde5ee; --ink: #14243a; --ink2: #44566d; --muted: #6b7c93;
+  --amber: #b45309; --rose: #be123c;
+  --radius: 14px;
+  --shadow: 0 1px 2px rgba(11,42,74,.06), 0 4px 16px rgba(11,42,74,.06);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { font-family: "Pretendard", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", -apple-system, "Segoe UI", sans-serif;
+  background: var(--bg); color: var(--ink); line-height: 1.55; font-size: 15px; }
+[hidden] { display: none !important; }
+h1, h2, h3, h4, p { margin: 0; }
+button { font-family: inherit; cursor: pointer; }
+.wrap { max-width: 1040px; margin: 0 auto; padding: 0 20px; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+
+/* 상단바 */
+.topbar { background: var(--navy); color: #fff; position: sticky; top: 0; z-index: 30; }
+.topbar .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 56px; flex-wrap: wrap; }
+.brand { font-weight: 800; letter-spacing: -.01em; display: flex; align-items: center; gap: 10px; border: 0; background: none; color: #fff; font-size: 16px; padding: 0; }
+.brand i { width: 28px; height: 28px; border-radius: 8px; background: var(--teal); display: grid; place-items: center; font-style: normal; color: var(--navy); font-size: 13px; font-weight: 900; }
+.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+.tab { background: none; border: 0; color: #b9cbe0; padding: 8px 12px; border-radius: 8px; font-size: 14px; font-weight: 600; }
+.tab:hover { color: #fff; background: rgba(255,255,255,.08); }
+.tab[aria-current="page"] { color: #fff; background: rgba(255,255,255,.16); }
+
+main { padding: 28px 0 64px; }
+.view > * + * { margin-top: 20px; }
+
+/* 히어로 */
+.hero { background: radial-gradient(1200px 400px at 85% -20%, #1b6fb8 0%, transparent 60%), linear-gradient(135deg, #061a31, #0b3a68);
+  color: #fff; border-radius: 20px; padding: 44px 36px; box-shadow: var(--shadow); }
+.pill { display: inline-block; font-size: 12px; font-weight: 700; padding: 5px 12px; border-radius: 99px; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18); color: #cfe3f7; }
+.hero h1 { font-size: clamp(28px, 5vw, 40px); line-height: 1.2; margin: 16px 0 12px; letter-spacing: -.02em; }
+.hero h1 em { font-style: normal; color: #5eead4; }
+.hero p { color: #c4d6ea; max-width: 560px; }
+.hero .cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 26px; }
+
+.btn { border: 1px solid transparent; border-radius: 10px; padding: 11px 18px; font-size: 14px; font-weight: 700; transition: .15s; }
+.btn.primary { background: var(--teal); color: #032b27; }
+.btn.primary:hover { background: #2dd4bf; }
+.btn.ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.3); }
+.btn.ghost:hover { background: rgba(255,255,255,.1); }
+.btn.line { background: #fff; color: var(--navy2); border-color: var(--line); }
+.btn.line:hover { border-color: var(--blue); }
+.btn.solid { background: var(--navy2); color: #fff; }
+.btn.solid:hover { background: var(--blue); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+
+.card { background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 22px; box-shadow: var(--shadow); }
+.card h2 { font-size: 18px; margin-bottom: 4px; }
+.card h3 { font-size: 15px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.step b { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; background: var(--blue-weak); color: var(--navy2); font-size: 13px; margin-bottom: 8px; }
+
+/* 라이프사이클 */
+.life { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; }
+.life div { position: relative; padding: 12px 14px 12px 22px; font-size: 12.5px; font-weight: 700; color: var(--navy);
+  clip-path: polygon(0 0, calc(100% - 14px) 0, 100% 50%, calc(100% - 14px) 100%, 0 100%, 12px 50%); margin-right: -4px; text-align: center; line-height: 1.3; }
+.life div small { display: block; font-weight: 500; color: var(--ink2); font-size: 11px; margin-top: 2px; }
+.life div:nth-child(1) { background: #cfe0f6; } .life div:nth-child(2) { background: #b4cdef; }
+.life div:nth-child(3) { background: #8fb4e6; } .life div:nth-child(4) { background: #5f93d8; color: #fff; }
+.life div:nth-child(5) { background: #2f6fc4; color: #fff; } .life div:nth-child(6) { background: #1d4a8a; color: #fff; }
+.life div:nth-child(n+4) small { color: #dbe8f8; }
+.life div.off { opacity: .28; }
+
+/* 진단 */
+.progress { height: 6px; background: #dfe7f1; border-radius: 9px; overflow: hidden; }
+.progress i { display: block; height: 100%; background: var(--teal); transition: width .25s; }
+.qmeta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; font-size: 13px; color: var(--muted); font-weight: 600; }
+.qtext { font-size: clamp(18px, 3vw, 22px); font-weight: 700; line-height: 1.45; letter-spacing: -.01em; margin: 18px 0 24px; min-height: 3.2em; }
+.scale { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.scale button { border: 1.5px solid var(--line); background: #fff; border-radius: 12px; padding: 14px 6px; font-size: 13px; color: var(--ink2); font-weight: 600; transition: .12s; }
+.scale button b { display: block; font-size: 20px; color: var(--navy2); margin-bottom: 2px; }
+.scale button:hover { border-color: var(--blue); background: var(--blue-weak); }
+.scale button.on { border-color: var(--teal-dark); background: #e0f7f3; color: #064e46; }
+.qnav { display: flex; justify-content: space-between; margin-top: 22px; }
+
+/* 결과 */
+.top3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.rank { position: relative; border: 1px solid var(--line); border-radius: var(--radius); background: #fff; padding: 20px; box-shadow: var(--shadow); }
+.rank.first { border: 2px solid var(--teal); background: linear-gradient(180deg, #f0fdfb, #fff 60%); }
+.rank .no { font-size: 12px; font-weight: 800; color: var(--teal-dark); letter-spacing: .04em; }
+.rank h3 { font-size: 19px; margin: 4px 0 2px; }
+.rank .en { font-size: 12px; color: var(--muted); margin-bottom: 10px; }
+.rank .pct { font-size: 34px; font-weight: 800; color: var(--navy2); letter-spacing: -.02em; }
+.rank .pct small { font-size: 15px; }
+.rank p { color: var(--ink2); font-size: 14px; margin-top: 8px; }
+.tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.tag { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 99px; background: var(--blue-weak); color: var(--navy2); }
+.tag.warn { background: #fef3c7; color: var(--amber); }
+.bar-row { display: grid; grid-template-columns: 150px 1fr 48px; gap: 10px; align-items: center; padding: 6px 0; font-size: 14px; }
+.bar-row button { all: unset; cursor: pointer; font-weight: 600; color: var(--ink); }
+.bar-row button:hover { color: var(--blue); text-decoration: underline; }
+.bar { height: 12px; background: #e8eef6; border-radius: 99px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: linear-gradient(90deg, #5f93d8, var(--navy2)); border-radius: 99px; }
+.bar-row.top .bar i { background: linear-gradient(90deg, #5eead4, var(--teal-dark)); }
+.bar-row .v { text-align: right; font-weight: 700; color: var(--ink2); }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; align-items: start; }
+.radar-box { display: grid; place-items: center; }
+.dim-list { list-style: none; margin: 0; padding: 0; font-size: 14px; }
+.dim-list li { display: grid; grid-template-columns: 110px 1fr 36px; gap: 8px; align-items: center; padding: 4px 0; }
+.result-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.notice { font-size: 13px; color: var(--muted); background: #eef3f9; border-radius: 10px; padding: 12px 14px; }
+
+/* 도감 */
+.role-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; }
+.role-card { text-align: left; background: #fff; border: 1px solid var(--line); border-radius: var(--radius); padding: 18px; box-shadow: var(--shadow); transition: .15s; font-size: inherit; color: inherit; }
+.role-card:hover { border-color: var(--blue); transform: translateY(-2px); }
+.role-card h3 { font-size: 17px; margin-bottom: 2px; }
+.role-card .en { font-size: 12px; color: var(--muted); }
+.role-card p { margin-top: 8px; font-size: 14px; color: var(--ink2); }
+.role-card .stg { margin-top: 10px; font-size: 12px; font-weight: 700; color: var(--navy2); }
+.badge-new { font-size: 11px; font-weight: 800; background: #fde68a; color: #78350f; padding: 2px 7px; border-radius: 99px; margin-left: 6px; vertical-align: middle; }
+.detail-head h2 { font-size: 24px; letter-spacing: -.01em; }
+.detail-head .en { color: var(--muted); font-size: 13px; margin-top: 2px; }
+.detail-head p { font-size: 16px; font-weight: 600; margin-top: 12px; }
+.quad { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.quad > div { background: #eef3f9; border-radius: 12px; padding: 16px 18px; }
+.quad > div:nth-child(2), .quad > div:nth-child(3) { background: #f3f4f6; }
+.quad h4 { font-size: 14px; margin-bottom: 8px; color: var(--navy); }
+.quad ul { margin: 0; padding-left: 18px; font-size: 14px; color: var(--ink2); }
+.quad li + li { margin-top: 3px; }
+.sample { font-size: 14px; background: #fff; border: 1px dashed var(--line); border-radius: 10px; padding: 12px 14px; }
+table.cmp { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.cmp th { background: var(--navy); color: #fff; padding: 10px; text-align: left; font-weight: 600; }
+table.cmp td { padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.cmp td:first-child { font-weight: 700; white-space: nowrap; }
+.table-scroll { overflow-x: auto; }
+.back { background: none; border: 0; color: var(--navy2); font-weight: 700; font-size: 14px; padding: 0; }
+
+/* 공고 해독기 */
+textarea { width: 100%; min-height: 180px; border: 1.5px solid var(--line); border-radius: 12px; padding: 14px; font: inherit; font-size: 14px; resize: vertical; color: var(--ink); background: #fff; }
+textarea:focus { outline: 2px solid var(--blue); outline-offset: 1px; border-color: transparent; }
+.hits { margin-top: 6px; font-size: 13px; color: var(--ink2); }
+.hits mark { background: #ccfbf1; color: #064e46; padding: 1px 6px; border-radius: 6px; margin-right: 4px; font-weight: 600; }
+.examples { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 10px; }
+.examples button { font-size: 12.5px; padding: 5px 10px; border-radius: 99px; border: 1px solid var(--line); background: #fff; color: var(--ink2); font-weight: 600; }
+.examples button:hover { border-color: var(--blue); color: var(--blue); }
+
+footer { text-align: center; color: var(--muted); font-size: 12.5px; padding: 0 20px 40px; }
+
+@media (max-width: 760px) {
+  .grid3, .top3, .two, .quad { grid-template-columns: 1fr; }
+  .hero { padding: 32px 22px; }
+  .bar-row { grid-template-columns: 112px 1fr 44px; }
+  .life { grid-template-columns: repeat(3, 1fr); gap: 4px; }
+  .life div { clip-path: none; border-radius: 8px; margin: 0; }
+  .scale { gap: 6px; }
+  .scale button { padding: 10px 2px; font-size: 11.5px; }
+}
+@media print {
+  .topbar, .no-print, footer { display: none !important; }
+  body { background: #fff; }
+  .card, .rank { box-shadow: none; break-inside: avoid; }
+  main { padding: 0; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <button class="brand" data-go="home"><i>JF</i>직무 적합성 진단</button>
+    <nav class="tabs" aria-label="주요 메뉴">
+      <button class="tab" data-go="home">홈</button>
+      <button class="tab" data-go="quiz">적합성 진단</button>
+      <button class="tab" data-go="atlas">직무 도감</button>
+      <button class="tab" data-go="decoder">공고 해독기</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- 홈 -->
+  <section class="view" id="v-home">
+    <div class="hero">
+      <span class="pill">AI 테크기업 직무 이해 세미나 · 실습</span>
+      <h1>IT·SW·AI 기업의 <em>직무</em>,<br>나는 어디에 맞을까?</h1>
+      <p>솔루션이 만들어져서 고객에게 닿고 오래 쓰이기까지 — 그 여정에는 서로 다른 일을 하는 여러 직무가 있습니다.
+        26개 문항에 답하면 나의 성향과 가장 가까운 직무를 찾아드립니다.</p>
+      <div class="cta">
+        <button class="btn primary" data-go="quiz">▶ 적합성 진단 시작하기 (약 5분)</button>
+        <button class="btn ghost" data-go="atlas">직무 도감 먼저 살펴보기</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>솔루션 라이프사이클과 직무</h2>
+      <p class="muted small" style="margin-bottom:14px">단계별로 다양한 담당자가 협업합니다.</p>
+      <div class="life" id="life-home"></div>
+    </div>
+
+    <div class="grid3">
+      <div class="card step"><b>1</b><h3>26개 문항에 답하기</h3><p class="muted small">평소의 나를 떠올리며 "그렇다 ↔ 아니다"로 솔직하게 선택하세요. 정답은 없습니다.</p></div>
+      <div class="card step"><b>2</b><h3>적합 직무 Top 3 확인</h3><p class="muted small">11개 직무와의 일치도, 나의 강점·보완 역량을 레이더 차트로 보여드립니다.</p></div>
+      <div class="card step"><b>3</b><h3>직무 도감으로 깊이 보기</h3><p class="muted small">KPI·필요 역량·채용공고 속 신호·직무 명칭을 확인하고, 실제 공고도 해독해 보세요.</p></div>
+    </div>
+    <p class="notice">※ 이 진단은 자기 보고식 문항에 기반한 <b>탐색용 도구</b>입니다. 결과는 가능성을 넓히는 참고 자료이며, 직무 선택을 확정하지 않습니다.
+      답변은 이 브라우저에만 저장되고 서버로 전송되지 않습니다.</p>
+  </section>
+
+  <!-- 진단 -->
+  <section class="view" id="v-quiz" hidden>
+    <div class="card">
+      <div class="qmeta"><span id="q-count"></span><span id="q-dim"></span></div>
+      <div class="progress"><i id="q-bar"></i></div>
+      <p class="qtext" id="q-text"></p>
+      <div class="scale" id="q-scale" role="radiogroup" aria-label="응답"></div>
+      <div class="qnav">
+        <button class="btn line" id="q-prev">← 이전</button>
+        <button class="btn solid" id="q-next">다음 →</button>
+      </div>
+      <p class="muted small" style="margin-top:14px">키보드 1~5 로 답하고, ← → 로 이동할 수 있어요.</p>
+    </div>
+  </section>
+
+  <!-- 결과 -->
+  <section class="view" id="v-result" hidden>
+    <div class="card">
+      <h2>나와 가장 가까운 직무</h2>
+      <p class="muted small" id="r-sub"></p>
+    </div>
+    <div class="top3" id="r-top"></div>
+    <div class="two">
+      <div class="card radar-box"><h3 style="align-self:start;margin-bottom:6px">나의 역량·성향 프로파일</h3><div id="r-radar"></div></div>
+      <div class="card">
+        <h3>1순위 직무 기준 — 강점과 보완 포인트</h3>
+        <div id="r-gap" style="margin-top:12px"></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>전체 직무 일치도</h3>
+      <p class="muted small" style="margin-bottom:8px">직무명을 누르면 도감으로 이동합니다.</p>
+      <div id="r-all"></div>
+    </div>
+    <div class="card">
+      <h3>솔루션 라이프사이클에서의 위치 (1순위)</h3>
+      <div class="life" id="life-result" style="margin-top:12px"></div>
+    </div>
+    <p class="notice">일치도는 각 직무가 중요하게 보는 역량(슬라이드의 KPI·필요 역량·채용공고 신호 기반)에 대한 나의 응답 점수를 가중 평균한 값입니다.
+      점수 차이가 작은 직무끼리는 우열보다 <b>둘 다 후보</b>로 보세요.</p>
+    <div class="result-actions no-print">
+      <button class="btn solid" id="r-print">인쇄 / PDF 저장</button>
+      <button class="btn line" id="r-copy">결과 링크 복사</button>
+      <button class="btn line" id="r-retry">다시 진단하기</button>
+      <button class="btn line" data-go="atlas">직무 도감 보기</button>
+    </div>
+  </section>
+
+  <!-- 도감 -->
+  <section class="view" id="v-atlas" hidden>
+    <div class="card">
+      <h2>직무 도감</h2>
+      <p class="muted small">AI 테크기업의 직무 11가지. 카드를 눌러 상세 내용을 확인하세요.</p>
+    </div>
+    <div class="role-grid" id="atlas-grid"></div>
+    <div class="card">
+      <h2>역할의 경계선</h2>
+      <p class="muted small" style="margin-bottom:12px">고객 대면 기술·영업 직무는 활동 구간으로 구분합니다.</p>
+      <div class="table-scroll">
+        <table class="cmp">
+          <thead><tr><th>직무</th><th>활동 구간</th><th>대표 활동</th><th>요약</th></tr></thead>
+          <tbody>
+            <tr><td>세일즈 엔지니어</td><td>기회 검토 ~ 제안/협상</td><td>PoC, 기술 미팅, 제안서 작성</td><td>고객의 문제를 기술로 해결해 수주를 담당하는 사람</td></tr>
+            <tr><td>영업</td><td>리드 발굴 ~ 계약 체결</td><td>기회 발굴, 제안 전략, 가격 협상</td><td>영업 전략을 이끌고 계약을 성사시키는 사람</td></tr>
+            <tr><td>컨설턴트</td><td>계약 이후 프로젝트</td><td>요구사항 분석, 맞춤 구현, 교육</td><td>계약된 솔루션을 실제로 구현하고 적용하는 사람</td></tr>
+            <tr><td>CSM</td><td>도입 이후 ~ 운영/확장</td><td>온보딩, 성과 관리, 리뉴얼 유도</td><td>고객이 제품을 잘 쓰고 성과를 내게 돕는 사람</td></tr>
+            <tr><td>기술지원</td><td>사용 중 문제 발생 시</td><td>문제 진단, 트러블슈팅, 패치 제공</td><td>사용 중 발생한 기술 문제를 신속하게 해결하는 사람</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- 직무 상세 -->
+  <section class="view" id="v-role" hidden>
+    <button class="back" id="role-back">← 직무 도감으로</button>
+    <div class="card detail-head" id="role-head"></div>
+    <div class="card"><h3 style="margin-bottom:10px">솔루션 라이프사이클에서의 위치</h3><div class="life" id="life-role"></div></div>
+    <div class="quad" id="role-quad"></div>
+    <div class="two">
+      <div class="card"><h3 style="margin-bottom:8px">이 직무가 중요하게 보는 성향·역량</h3><div id="role-dims"></div></div>
+      <div class="card"><h3 style="margin-bottom:8px">실제 채용공고 예시</h3><div id="role-sample"></div>
+        <div class="no-print" style="margin-top:14px"><div class="muted small" id="role-mine"></div></div></div>
+    </div>
+  </section>
+
+  <!-- 공고 해독기 -->
+  <section class="view" id="v-decoder" hidden>
+    <div class="card">
+      <h2>채용공고 해독기</h2>
+      <p class="muted small" style="margin-bottom:12px">직무명만 봐서는 헷갈릴 때, 공고 본문을 붙여넣어 보세요. 공고 속 신호(키워드)로 어떤 직무에 가까운지 알려드립니다.
+        (분석은 브라우저 안에서만 이루어집니다.)</p>
+      <textarea id="d-text" placeholder="채용공고의 업무/자격요건 내용을 붙여넣으세요. 한국어·영어 모두 가능합니다."></textarea>
+      <div class="examples no-print"><span class="muted small" style="align-self:center">예시 불러오기:</span><span id="d-examples" style="display:contents"></span></div>
+    </div>
+    <div class="card" id="d-out" hidden>
+      <h3 style="margin-bottom:8px">해독 결과</h3>
+      <div id="d-bars"></div>
+      <p class="muted small" id="d-note" style="margin-top:12px"></p>
+    </div>
+  </section>
+
+</main>
+<footer>AI 테크기업 직무 이해 · 세미나 실습용 · 내용 출처: 세미나 자료(2026.10.22)</footer>
+
+<script>
+"use strict";
+
+/* ───────── 데이터 ───────── */
+
+const LIFE = [
+  ["솔루션 개발", "R&D · Product"],
+  ["영업기회 발굴", "Marketing · Sales"],
+  ["솔루션 검증", "Sales Engineer"],
+  ["솔루션 구축", "Consultant"],
+  ["솔루션 운영", "Support Engineer"],
+  ["확산 & 갱신", "CSM · Sales"],
+];
+
+// 진단 차원(성향·역량). 각 차원은 2문항.
+const DIMS = {
+  CODE:  { name: "구현·코딩",        tip: "작은 사이드 프로젝트나 바이브코딩으로 '동작하는 것'을 직접 만들어 포트폴리오를 쌓아보세요." },
+  TECH:  { name: "기술 학습력",      tip: "AI·클라우드 등 새 기술을 공식 문서와 튜토리얼로 직접 써보고 정리하는 습관을 들여보세요." },
+  COMM:  { name: "설명·발표",        tip: "복잡한 기술을 비전문가에게 3분 안에 설명하는 연습, 짧은 시연 영상 녹화부터 시작해 보세요." },
+  REL:   { name: "관계·협상",        tip: "동아리·팀 프로젝트에서 조율 역할을 맡아보고, 업계 사람과의 정보 인터뷰로 네트워킹에 익숙해지세요." },
+  DATA:  { name: "데이터·프로세스",  tip: "엑셀·SQL로 공개 데이터를 정리해 인사이트를 뽑아보고, 반복 업무를 자동화해 보세요." },
+  PM:    { name: "일정·조율",        tip: "팀 프로젝트의 일정·역할·리스크를 직접 관리해 보고 그 과정을 문서로 남겨보세요." },
+  DIAG:  { name: "진단·문제해결",    tip: "오류 로그를 읽고 원인을 재현·기록하는 연습(오픈소스 이슈 재현, 버그 리포트 작성)을 해보세요." },
+  CREA:  { name: "기획·콘텐츠",      tip: "관심 제품의 메시지를 직접 다시 써보고, 블로그·뉴스레터로 꾸준히 발행해 보세요." },
+  DRIVE: { name: "목표 추진력",      tip: "숫자 목표(구독자, 참여자 수 등)를 정해 달성해 보는 작은 도전으로 끈기를 키워보세요." },
+  STRAT: { name: "구조·전략 설계",   tip: "기업 사례를 골라 시장·경쟁·파트너 구조를 한 장으로 그려 정리해 보세요." },
+  AMBIG: { name: "모호함 돌파",      tip: "요구사항이 불명확한 과제(해커톤, 현장 문제 풀이)에 참여해 일단 시작하고 정리하는 경험을 쌓으세요." },
+  LONG:  { name: "장기 신뢰·성공 지원", tip: "한 사람/팀을 오래 돕는 멘토링·운영 경험으로 장기 관계와 성과 관리를 연습해 보세요." },
+  STAB:  { name: "꼼꼼함·안정 운영", tip: "체크리스트·문서화로 정확성을 높이는 습관(매뉴얼 작성, 절차 개선)을 들여보세요." },
+};
+const DIM_IDS = Object.keys(DIMS);
+
+// [차원, 문항]
+const QUESTIONS = [
+  ["CODE", "새로운 기능이나 작은 도구를 직접 코드로 만들어 동작하는 걸 보면 큰 보람을 느낀다."],
+  ["COMM", "복잡한 내용을 비전문가도 이해하도록 쉽게 설명한다는 말을 자주 듣는다."],
+  ["REL", "처음 만난 사람과도 금방 신뢰 관계를 만들고 이야기를 끌어낼 수 있다."],
+  ["DATA", "엑셀·SQL·대시보드로 숫자를 정리해 패턴이나 원인을 찾는 일이 재미있다."],
+  ["PM", "여러 사람이 얽힌 일정·할 일·우선순위를 정리해 끝까지 챙기는 편이다."],
+  ["DIAG", "고장 난 것의 원인을 끈질기게 추적해 재현하고 해결해내는 걸 즐긴다."],
+  ["CREA", "글·카피·콘텐츠로 사람의 관심을 끄는 아이디어를 내는 걸 좋아한다."],
+  ["DRIVE", "매출·실적처럼 명확한 숫자 목표가 있을 때 더 의욕이 난다."],
+  ["STRAT", "세부 구현보다, 판을 어떻게 짜야 모두에게 이익일지 큰 구조를 생각하는 게 좋다."],
+  ["AMBIG", "매뉴얼이 없고 요구사항이 불명확해도 일단 뛰어들어 방향을 잡는 편이다."],
+  ["LONG", "한 번 맺은 관계를 오래 챙기고, 상대가 성과를 내도록 꾸준히 돕는 일이 잘 맞는다."],
+  ["STAB", "정해진 기준과 절차를 지키며 꼼꼼하게 정확성을 챙기는 일이 편하다."],
+  ["TECH", "처음 보는 기술·제품도 문서를 보며 빠르게 구조를 파악하는 편이다."],
+  ["CODE", "하루 대부분을 코드를 읽고 쓰고 리뷰하는 데 써도 지루하지 않다."],
+  ["COMM", "여러 사람 앞에서 발표하거나 시연하는 것이 부담보다 즐거움에 가깝다."],
+  ["REL", "이견이 있는 상대와 협상해 서로 받아들일 합의점을 찾는 일이 흥미롭다."],
+  ["DATA", "비효율적인 업무 절차를 발견하면 개선안을 만들어 고치고 싶어진다."],
+  ["PM", "이해관계가 다른 사람들 사이를 조율해 일이 굴러가게 만드는 데 보람을 느낀다."],
+  ["DIAG", "급한 장애 상황에서도 침착하게 단계별로 원인을 좁혀갈 수 있다."],
+  ["CREA", "같은 제품도 어떤 메시지로 포장하면 사람들이 반응할지 자주 생각해 본다."],
+  ["DRIVE", "거절당하거나 일이 틀어져도 금방 털고 다시 도전할 수 있다."],
+  ["STRAT", "시장·경쟁·고객 상황을 보고 어디에 집중해야 할지 방향을 정하는 일에 끌린다."],
+  ["AMBIG", "고객 현장에 직접 들어가 사람들과 부딪히며 문제를 푸는 일이 나쁘지 않다."],
+  ["LONG", "고객이 제품을 잘 쓰고 있는지 데이터로 확인하고 먼저 연락하는 편이다."],
+  ["STAB", "일하는 리듬이 예측 가능하고 안정적인 환경이 편하다."],
+  ["TECH", "새로운 기술 트렌드(AI, 클라우드 등)를 꾸준히 찾아보고 직접 써본다."],
+];
+
+const SCALE = [["1", "전혀 아님"], ["2", "아님"], ["3", "보통"], ["4", "그런 편"], ["5", "매우 그럼"]];
+
+/*
+ 직무 정의. w: 차원별 중요도(0~3). 슬라이드의 KPI/필요 역량/채용공고 신호를 근거로 설정.
+ stages: LIFE 인덱스. sample: 슬라이드의 채용공고 예시.
+*/
+const ROLES = [
+  { id: "rnd", name: "R&D · Product", en: "R&D / Solution Engineer / Product Owner / Product Manager",
+    tag: "고객의 요구를 실제로 동작하는 제품·기능으로 개발하는 직무", stages: [0],
+    kpi: ["출시 일정 준수, 코드 품질(버그율·장애율), 기술 부채 관리"],
+    skills: ["솔루션 설계·코딩 능력", "문제 해결을 위한 논리적 사고", "코드리뷰 등 협업 능력"],
+    signals: ["\"구축\", \"개발\", \"코드 리뷰\"", "구체적 기술스택(언어/프레임워크)", "\"고객\" 언급 거의 없음"],
+    titles: ["R&D", "Solution Engineer", "Product Owner", "Product Manager"],
+    w: { CODE: 3, TECH: 3, DIAG: 2, STRAT: 1, PM: 1, STAB: 1 },
+    sample: ["GE — Staff Software Engineer", "복잡한 소프트웨어 시스템의 설계·개발, 아키텍처 의사결정, 엔지니어링 베스트 프랙티스·코딩 표준 수립, C++/C# 등 객체지향 경험."],
+    kw: ["architectural decision", "code review", "coding standard", "software engineer", "design and development", "best practices", "c++", "c#", "아키텍처", "코드 리뷰", "개발자", "프레임워크"] },
+  { id: "marketing", name: "마케팅", en: "Growth / Content / Demand Gen Marketer",
+    tag: "고객에게 문제 인식을 심고 브랜드 신뢰를 쌓아 파이프라인을 채우는 직무", stages: [1],
+    kpi: ["리드 수(MQL), 리드 품질(전환율)", "브랜드 인지도, 캠페인 ROI"],
+    skills: ["콘텐츠 기획력", "데이터 기반 캠페인 설계", "카피라이팅", "채널별 타게팅 감각"],
+    signals: ["\"리드 제너레이션\", \"퍼널 최적화\"", "\"캠페인 기획\", \"브랜드 포지셔닝\""],
+    titles: ["Growth Marketer(성과·전환 중심)", "Content Marketer", "Demand Gen Marketer(파이프라인 중심)"],
+    w: { CREA: 3, DATA: 2, COMM: 2, STRAT: 1, TECH: 1, DRIVE: 1 },
+    sample: ["OpenAI — B2B Marketing Lead, Korea", "B2B 마케팅 플랜 수립, full-funnel 프로그램, Korea Country/GTM·파트너와 협업, pipeline growth 지원."],
+    kw: ["lead generation", "funnel", "campaign", "brand", "b2b marketing", "content marketing", "pipeline growth", "demand gen", "mql", "go-to-market", "리드 제너레이션", "퍼널", "캠페인", "브랜드 포지셔닝", "마케터", "콘텐츠"] },
+  { id: "sales", name: "영업", en: "Account Executive / Account Manager",
+    tag: "고객과의 관계를 만들고 계약을 체결시키는 직무", stages: [1, 5],
+    kpi: ["매출, Win rate, Quota 달성률", "파이프라인 규모"],
+    skills: ["협상력, 관계 구축력", "압박 속에서도 흔들리지 않는 멘탈", "숫자 관리 능력"],
+    signals: ["\"할당량(쿼터)\", \"잠재고객 발굴\", \"협상\"", "\"계약 체결\", \"파이프라인 관리\""],
+    titles: ["Account Executive(신규 계약 중심)", "Account Manager(기존 고객 관리 중심)"],
+    w: { REL: 3, DRIVE: 3, COMM: 2, STRAT: 1, DATA: 1 },
+    sample: ["Anthropic — Enterprise Account Executive", "매출 목표 달성, 신규 계정 확보와 관계 확대, 영업 기회 발굴, 고객 경영진과의 컨설팅형 영업 프로세스 리드."],
+    kw: ["revenue target", "quota", "account executive", "account manager", "new accounts", "opportunities", "sales cycle", "negotiation", "win rate", "expanding relationships", "할당량", "쿼터", "협상", "계약 체결", "신규 고객", "영업"] },
+  { id: "salesops", name: "Sales Operation", en: "Sales Operations Manager / RevOps / Sales Enablement",
+    tag: "영업 조직이 더 빠르고 정확하게 움직이도록 프로세스·데이터·툴을 설계하는 직무", stages: [1],
+    kpi: ["파이프라인 정확도, 예측(forecast) 적중률", "영업 사이클 단축, CRM 데이터 정합성"],
+    skills: ["데이터 분석력, 프로세스 설계력", "CRM/툴 운영 능력(Salesforce 등)", "크로스펑셔널 조율력"],
+    signals: ["\"CRM 관리\", \"포캐스팅\"", "\"프로세스 개선\", \"세일즈 인핸스먼트\""],
+    titles: ["Sales Operations Manager", "RevOps", "Sales Enablement"],
+    w: { DATA: 3, STAB: 2, PM: 2, TECH: 1, STRAT: 1, COMM: 1 },
+    sample: ["AWS — Sr. Strategic GTM & Ops Manager", "전략적 운영 파트너, 분기·연간 비즈니스 케이던스, 파이프라인 인스펙션, 리포팅·인사이트, Salesforce 등 도구 활용."],
+    kw: ["crm", "forecast", "salesforce", "sales process", "business cadence", "pipeline inspection", "reporting and insights", "territory", "revops", "enablement", "sales operations", "포캐스팅", "프로세스 개선", "세일즈 인핸스먼트"] },
+  { id: "bd", name: "사업기획 (BD)", en: "Business Development Manager / Director",
+    tag: "플레이북 없는 곳에서 빅딜의 구조를 설계하는 직무", stages: [1],
+    kpi: ["빅딜 성사 건수, 딜당 계약규모", "전략적 파트너십 체결 수 — 볼륨보다 임팩트 중심"],
+    skills: ["복잡한 이해관계자 구조를 읽는 능력", "새로운 딜 구조를 설계하는 창의력", "최고경영진 레벨 관계 구축력"],
+    signals: ["\"전략적 파트너십\", \"대형 계약\"", "\"신사업 개발\", \"C-level 관계\""],
+    titles: ["Business Development Manager/Director", "Enterprise Development"],
+    w: { STRAT: 3, REL: 3, AMBIG: 2, COMM: 2, CREA: 1, DRIVE: 1 },
+    sample: ["BSI — Business Development Executive", "Key Account 관계 관리, 시장 정보 DB 구축, 신규 사업 이니셔티브 제안, 파이프라인 확보, 경영진 레벨 관계 구축."],
+    kw: ["business development", "strategic partnership", "new business initiatives", "executive-level", "key account", "c-level", "partnership", "전략적 파트너십", "신사업", "사업기획", "대형 계약"] },
+  { id: "se", name: "세일즈 엔지니어", en: "Solutions Architect / Solutions Engineer / Presales",
+    tag: "기술적으로 고객에게 확신을 주어 영업이 계약을 따내도록 돕는 직무", stages: [2],
+    kpi: ["Win rate 기여도, POC·데모 성공률", "기술 이슈로 인한 딜 실패율"],
+    skills: ["발표력, 복잡한 기술을 쉽게 번역하는 능력", "짧은 시간 내 고객 니즈 파악력"],
+    signals: ["\"기술 발표\", \"데모(시연)\"", "\"PoC(개념검증)\", \"제안요청서(RFP) 대응\""],
+    titles: ["Solutions Architect", "Solutions Engineer", "Presales", "Presales Consultant"],
+    w: { COMM: 3, TECH: 3, REL: 2, DIAG: 1, CODE: 1, DRIVE: 1 },
+    sample: ["OpenAI — Solution Engineer", "pre-sales 단계의 기술 전문성 제공, 기술 요구사항 명확화, 데모·유스케이스 스코핑·PoC, 고객의 목소리(VoC) 전달."],
+    kw: ["pre-sales", "presales", "demo", "proof of concept", "poc", "rfp", "technical requirements", "solutions engineer", "solution engineer", "solutions architect", "technical presentation", "데모", "시연", "제안요청서", "기술 발표"] },
+  { id: "consultant", name: "컨설턴트", en: "Technical / Solution / Project Consultant",
+    tag: "계약된 솔루션이 실제로 고객 환경에서 돌아가게 구축하는 직무", stages: [3],
+    kpi: ["구축 일정 준수율, 프로젝트 예산 준수", "구축 후 고객 만족도"],
+    skills: ["프로젝트 관리 능력, 현장에서의 즉각적 문제해결력", "이해관계자 조율력"],
+    signals: ["\"구축(구현)\", \"배포\"", "\"프로젝트 일정 관리\", \"이해관계자 관리\" + 제품/플랫폼 인증 요구"],
+    titles: ["Technical Consultant / Solution Consultant", "Project Consultant"],
+    w: { PM: 3, DIAG: 2, TECH: 2, REL: 2, AMBIG: 1, CODE: 1 },
+    sample: ["AWS — Delivery Consultant, Security, Professional Services", "고객·파트너 대상 온사이트 기술 engagement, 보안·컴플라이언스 솔루션 구현, 여러 프로젝트에 걸친 hands-on implementation."],
+    kw: ["implementation", "professional services", "delivery consultant", "on-site", "project management", "deployment", "engagement", "consultant", "구축", "배포", "프로젝트 관리", "컨설턴트"] },
+  { id: "support", name: "서포트 엔지니어", en: "Support Engineer / Technical Account Manager",
+    tag: "이미 도입된 솔루션에서 발생하는 기술적 문제를 해결하는 직무", stages: [4],
+    kpi: ["티켓 처리 시간(SLA 준수율)", "1차 해결율, 고객 만족도"],
+    skills: ["트러블슈팅 능력, 문서화·매뉴얼 작성 능력", "장애 대응 시의 침착함"],
+    signals: ["\"트러블슈팅\", \"티켓 처리\", \"SLA(서비스수준협약) 준수\"", "\"대기 근무\", \"L1/L2/L3 단계별 대응\""],
+    titles: ["Support Engineer", "Technical Account Manager"],
+    w: { DIAG: 3, TECH: 2, STAB: 2, COMM: 1, CODE: 1 },
+    sample: ["Datadog — Technical Support Engineer", "티켓·라이브챗·화면공유로 고객 이슈 해결, 기술 이슈 재현, 제품 데모 인증, 로테이션(주말 포함) 근무 가능."],
+    kw: ["ticket", "troubleshooting", "sla", "escalation", "support engineer", "technical support", "reproduce", "rotating schedule", "on-call", "티켓", "트러블슈팅", "대기 근무", "장애 대응", "l1", "l2"] },
+  { id: "csm", name: "CSM", en: "Customer Success Manager / Client Success / Renewal Manager",
+    tag: "고객이 제품을 계속 쓰고 재계약하도록 관계를 관리하는 직무", stages: [5],
+    kpi: ["Retention, NRR(순매출유지율)", "Churn 방지율", "업셀·크로스셀 매출"],
+    skills: ["관계 유지력, 데이터 기반 설득력(사용률·ROI 리포팅)", "장기적 신뢰 구축력"],
+    signals: ["\"갱신(재계약)\", \"이탈(Churn) 방지\", \"온보딩\"", "\"QBR\", \"고객 대변인(Advocate)\""],
+    titles: ["Customer Success Executive", "Client Success Manager", "Renewal Manager"],
+    w: { LONG: 3, REL: 3, DATA: 2, COMM: 2, DRIVE: 1, PM: 1 },
+    sample: ["Microsoft — Customer Success Account Manager", "핵심 이해관계자와의 관계 관리, 고객 인시던트·에스컬레이션 end-to-end 관리, 성공 계획 수립, customer-facing consulting 경험."],
+    kw: ["customer success", "renewal", "churn", "retention", "onboarding", "qbr", "nrr", "adoption", "customer health", "success plan", "갱신", "재계약", "이탈", "온보딩", "고객 성공"] },
+  { id: "fde", name: "FDE", en: "Forward Deployed Engineer", isNew: true,
+    tag: "고객사에 직접 파견되어 현장에서 문제를 파악하고 코드로 즉시 구현하는 엔지니어", stages: [2, 3],
+    kpi: ["현장 문제의 해결·구현 속도와 고객 채택(Adoption)", "(슬라이드: 세일즈와 엔지니어링 사이 간극을 메우는 역할)"],
+    skills: ["현장 상주, 불명확한 요구사항에서의 문제 파악", "코드로 즉시 구현하는 실행력", "고객 시스템·데이터 통합 이해"],
+    signals: ["\"Forward Deployed\", \"Applied AI Engineer\", \"Deployment Solutions Engineer\"", "레거시 시스템 통합, 데이터 통합 이슈", "※ 공고의 약 30%는 세일즈 엔지니어를 FDE로 잘못 라벨링 — 실제 코딩 비중 확인 필요"],
+    titles: ["Forward Deployed Engineer", "Forward Deployed AI Engineer", "Applied AI Engineer", "Deployment Solutions Engineer"],
+    w: { CODE: 3, AMBIG: 3, REL: 2, DIAG: 2, TECH: 2, COMM: 1 },
+    sample: ["FDE 채용 활발 기업 (2026)", "Palantir(원조), OpenAI, Anthropic, Google, Databricks, Salesforce, Deloitte·Accenture 등. 최근 12~18개월 공고 800~1,165% 급증."],
+    kw: ["forward deployed", "forward-deployed", "fde", "applied ai engineer", "deployment solutions", "embedded with customer", "legacy system", "data integration", "현장 상주", "레거시", "데이터 통합"] },
+  { id: "corp", damp: 0.88, name: "Corporate · Back Office", en: "HR / Accounting / Legal / IT",
+    tag: "인사·회계·법무·IT로 회사가 안정적으로 굴러가게 하는 직무군", stages: [],
+    kpi: ["(직군별) 인사: 필요한 사람을 뽑고 성장·유지", "회계: 돈의 흐름 추적, 재무 의사결정 지원", "법무: 계약·규제 리스크로부터 회사 보호", "IT: 시스템·인프라 안정 운영, 업무 환경 지원"],
+    skills: ["정확성·꼼꼼함과 절차 준수", "내부 이해관계자 지원", "직군별 전문 지식(노무·회계·법률·인프라)"],
+    signals: ["\"채용·평가·노무\", \"결산·세무\", \"계약 검토·컴플라이언스\", \"사내 시스템 운영\""],
+    titles: ["인사(HR)", "회계", "법무", "IT"],
+    w: { STAB: 3, DATA: 2, PM: 1 },
+    sample: ["직군 안내", "인사: 사람을 뽑고 성장시키고 유지 · 회계: 회사의 돈이 들어오고 나가는 흐름 추적 · 법무: 계약·규제 리스크 보호 · IT: 시스템과 인프라 안정 운영."],
+    kw: ["human resources", "recruiting", "accounting", "legal counsel", "compliance", "payroll", "인사", "회계", "법무", "총무", "세무"] },
+];
+
+const ROLE_BY_ID = Object.fromEntries(ROLES.map(r => [r.id, r]));
+
+/* ───────── 유틸 ───────── */
+
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, attrs = {}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") n.className = v; else if (k === "text") n.textContent = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v); else n.setAttribute(k, v);
+  }
+  for (const c of kids.flat()) if (c != null) n.append(c.nodeType ? c : document.createTextNode(c));
+  return n;
+};
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) { /* 저장 불가 환경은 무시 */ } },
+  del(k) { try { localStorage.removeItem(k); } catch (e) { /* ignore */ } },
+};
+const KEY = "jobfit.answers.v1";
+
+/* ───────── 점수 계산 ───────── */
+
+function dimScores(ans) {
+  const sum = {}, cnt = {};
+  QUESTIONS.forEach(([d], i) => { sum[d] = (sum[d] || 0) + ans[i]; cnt[d] = (cnt[d] || 0) + 1; });
+  const out = {};
+  for (const d of DIM_IDS) out[d] = Math.round(((sum[d] - cnt[d]) / (cnt[d] * 4)) * 100); // 1~5 → 0~100
+  return out;
+}
+function roleFit(role, ds) {
+  let num = 0, den = 0;
+  for (const [d, w] of Object.entries(role.w)) { num += w * ds[d]; den += w; }
+  return Math.round((num / den) * (role.damp || 1));
+}
+function rankRoles(ans) {
+  const ds = dimScores(ans);
+  const list = ROLES.map(r => ({ role: r, fit: roleFit(r, ds) })).sort((a, b) => b.fit - a.fit);
+  return { ds, list };
+}
+
+/* ───────── 화면 전환 ───────── */
+
+const VIEWS = ["home", "quiz", "result", "atlas", "role", "decoder"];
+const TAB_OF = { home: "home", quiz: "quiz", result: "quiz", atlas: "atlas", role: "atlas", decoder: "decoder" };
+let answers = Array(QUESTIONS.length).fill(0);
+let qi = 0;
+
+function show(view, push = true) {
+  VIEWS.forEach(v => { $("#v-" + v).hidden = v !== view; });
+  document.querySelectorAll(".tab").forEach(t => {
+    if (t.dataset.go === TAB_OF[view]) t.setAttribute("aria-current", "page"); else t.removeAttribute("aria-current");
+  });
+  window.scrollTo({ top: 0 });
+  if (push) history.replaceState(null, "", location.pathname + (view === "home" ? "" : "#" + view));
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-go]");
+  if (!b) return;
+  const go = b.dataset.go;
+  if (go === "quiz") startOrResume();
+  else if (go === "atlas") show("atlas");
+  else if (go === "decoder") show("decoder");
+  else show("home");
+});
+
+/* ───────── 라이프사이클 스트립 ───────── */
+
+function renderLife(target, stages) {
+  target.replaceChildren(...LIFE.map(([a, b], i) =>
+    el("div", { class: !stages || !stages.length || stages.includes(i) ? "" : "off" }, a, el("small", { text: b }))));
+}
+
+/* ───────── 진단 ───────── */
+
+function loadSaved() {
+  const s = store.get(KEY);
+  if (s && /^[0-5]{26}$/.test(s)) answers = s.split("").map(Number);
+}
+function save() { store.set(KEY, answers.join("")); }
+
+function startOrResume() {
+  const done = answers.every(a => a > 0);
+  if (done) { renderResult(); show("result"); return; }
+  qi = Math.max(0, answers.findIndex(a => a === 0));
+  renderQ(); show("quiz");
+}
+
+function renderQ() {
+  const [dim, text] = QUESTIONS[qi];
+  $("#q-count").textContent = `${qi + 1} / ${QUESTIONS.length}`;
+  $("#q-dim").textContent = DIMS[dim].name;
+  $("#q-bar").style.width = `${(answers.filter(Boolean).length / QUESTIONS.length) * 100}%`;
+  $("#q-text").textContent = text;
+  $("#q-scale").replaceChildren(...SCALE.map(([n, label]) =>
+    el("button", { type: "button", role: "radio", "aria-checked": String(answers[qi] === +n), class: answers[qi] === +n ? "on" : "", onclick: () => answer(+n) },
+      el("b", { text: n }), label)));
+  $("#q-prev").disabled = qi === 0;
+  $("#q-next").disabled = !answers[qi];
+  $("#q-next").textContent = qi === QUESTIONS.length - 1 ? "결과 보기 ✓" : "다음 →";
+}
+function answer(n) {
+  answers[qi] = n; save();
+  renderQ();
+  setTimeout(() => { if (qi === answers.length - 1) { /* 마지막은 버튼으로 확정 */ } else next(); }, 160);
+}
+function next() {
+  if (!answers[qi]) return;
+  if (qi < QUESTIONS.length - 1) { qi++; renderQ(); }
+  else if (answers.every(Boolean)) { renderResult(); show("result"); }
+}
+function prev() { if (qi > 0) { qi--; renderQ(); } }
+$("#q-next").addEventListener("click", next);
+$("#q-prev").addEventListener("click", prev);
+document.addEventListener("keydown", e => {
+  if ($("#v-quiz").hidden || e.target.matches("textarea,input")) return;
+  if (/^[1-5]$/.test(e.key)) answer(+e.key);
+  else if (e.key === "ArrowRight") next();
+  else if (e.key === "ArrowLeft") prev();
+});
+
+/* ───────── 결과 ───────── */
+
+function radarSVG(ds, size = 380) {
+  const ns = "http://www.w3.org/2000/svg", cx = size / 2, cy = size / 2, R = size / 2 - 64, n = DIM_IDS.length;
+  const pt = (i, v) => { const a = -Math.PI / 2 + (i * 2 * Math.PI) / n; return [cx + Math.cos(a) * R * v, cy + Math.sin(a) * R * v]; };
+  const mk = (t, a) => { const e = document.createElementNS(ns, t); for (const k in a) e.setAttribute(k, a[k]); return e; };
+  const svg = mk("svg", { viewBox: `-50 0 ${size + 100} ${size}`, width: "100%", style: "max-width:480px", role: "img", "aria-label": "역량 레이더 차트" });
+  [0.25, 0.5, 0.75, 1].forEach(g => svg.append(mk("polygon", { points: DIM_IDS.map((_, i) => pt(i, g).join(",")).join(" "), fill: "none", stroke: "#dde5ee" })));
+  DIM_IDS.forEach((d, i) => {
+    const [x, y] = pt(i, 1); svg.append(mk("line", { x1: cx, y1: cy, x2: x, y2: y, stroke: "#e6ecf3" }));
+    const [lx, ly] = pt(i, 1.2);
+    const t = mk("text", { x: lx, y: ly, "text-anchor": lx < cx - 4 ? "end" : lx > cx + 4 ? "start" : "middle", "dominant-baseline": "middle", "font-size": "11.5", fill: "#44566d", "font-weight": "600" });
+    t.textContent = DIMS[d].name; svg.append(t);
+  });
+  svg.append(mk("polygon", { points: DIM_IDS.map((d, i) => pt(i, ds[d] / 100).join(",")).join(" "), fill: "rgba(20,184,166,.28)", stroke: "#0f8f82", "stroke-width": "2.2" }));
+  DIM_IDS.forEach((d, i) => { const [x, y] = pt(i, ds[d] / 100); svg.append(mk("circle", { cx: x, cy: y, r: 3.5, fill: "#0f8f82" })); });
+  return svg;
+}
+
+function strengths(role, ds) {
+  const rel = Object.entries(role.w).map(([d, w]) => ({ d, w, s: ds[d] }));
+  return {
+    good: rel.filter(x => x.w >= 2 && x.s >= 62).sort((a, b) => b.s * b.w - a.s * a.w).map(x => x.d),
+    gap: rel.filter(x => x.w >= 2 && x.s < 50).sort((a, b) => a.s - b.s).map(x => x.d),
+  };
+}
+
+function renderResult() {
+  const { ds, list } = rankRoles(answers);
+  $("#r-sub").textContent = `26개 문항 응답 결과입니다. 1순위는 "${list[0].role.name}" (${list[0].fit}%).`;
+  const medals = ["1순위", "2순위", "3순위"];
+  $("#r-top").replaceChildren(...list.slice(0, 3).map(({ role, fit }, i) => {
+    const st = strengths(role, ds);
+    return el("div", { class: "rank" + (i === 0 ? " first" : "") },
+      el("div", { class: "no", text: medals[i] }),
+      el("h3", { text: role.name }),
+      el("div", { class: "en", text: role.en }),
+      el("div", { class: "pct" }, String(fit), el("small", { text: "%" })),
+      el("p", { text: role.tag }),
+      el("div", { class: "tags" },
+        st.good.slice(0, 3).map(d => el("span", { class: "tag", text: "✓ " + DIMS[d].name })),
+        st.gap.slice(0, 2).map(d => el("span", { class: "tag warn", text: "△ " + DIMS[d].name }))),
+      el("div", { style: "margin-top:14px" }, el("button", { class: "btn line no-print", onclick: () => openRole(role.id) }, "직무 자세히 보기")));
+  }));
+  $("#r-radar").replaceChildren(radarSVG(ds));
+
+  const top = list[0].role, st = strengths(top, ds);
+  const gapBox = $("#r-gap"); gapBox.replaceChildren();
+  gapBox.append(el("p", { class: "small muted", text: `"${top.name}"가 특히 중요하게 보는 역량 중 나의 위치` }));
+  const ul = el("ul", { class: "dim-list" });
+  Object.entries(top.w).sort((a, b) => b[1] - a[1]).forEach(([d]) =>
+    ul.append(el("li", {}, DIMS[d].name, el("div", { class: "bar" }, el("i", { style: `width:${ds[d]}%` })), el("span", { class: "small", text: ds[d] }))));
+  gapBox.append(ul);
+  if (st.gap.length) {
+    gapBox.append(el("p", { class: "strong", style: "margin-top:14px;font-weight:700", text: "보완하면 좋은 점" }));
+    gapBox.append(el("ul", { style: "margin:6px 0 0;padding-left:18px;font-size:14px;color:var(--ink2)" },
+      st.gap.slice(0, 3).map(d => el("li", { text: `${DIMS[d].name}: ${DIMS[d].tip}` }))));
+  } else {
+    gapBox.append(el("p", { class: "small", style: "margin-top:14px;color:var(--ink2)", text: "핵심 역량에서 뚜렷한 약점이 보이지 않아요. 실제 공고와 도감으로 직무 이해를 더 깊게 해보세요." }));
+  }
+
+  $("#r-all").replaceChildren(...list.map(({ role, fit }, i) =>
+    el("div", { class: "bar-row" + (i < 3 ? " top" : "") },
+      el("button", { type: "button", onclick: () => openRole(role.id), text: role.name }),
+      el("div", { class: "bar" }, el("i", { style: `width:${fit}%` })),
+      el("span", { class: "v", text: fit + "%" }))));
+  renderLife($("#life-result"), top.stages);
+  if (!top.stages.length) $("#life-result").after(el("p", { class: "small muted", id: "life-note", text: "이 직무군은 솔루션 라이프사이클 전반을 지원합니다." }));
+  else $("#life-note")?.remove();
+}
+
+$("#r-print").addEventListener("click", () => window.print());
+$("#r-retry").addEventListener("click", () => {
+  answers = Array(QUESTIONS.length).fill(0); store.del(KEY); qi = 0; renderQ(); show("quiz");
+});
+$("#r-copy").addEventListener("click", async e => {
+  const url = `${location.origin}${location.pathname}#r=${answers.join("")}`;
+  try { await navigator.clipboard.writeText(url); e.target.textContent = "복사했어요 ✓"; }
+  catch (err) { prompt("아래 링크를 복사하세요", url); }
+  setTimeout(() => { e.target.textContent = "결과 링크 복사"; }, 1800);
+});
+
+/* ───────── 도감 ───────── */
+
+function renderAtlas() {
+  $("#atlas-grid").replaceChildren(...ROLES.map(r =>
+    el("button", { type: "button", class: "role-card", onclick: () => openRole(r.id) },
+      el("h3", {}, r.name, r.isNew ? el("span", { class: "badge-new", text: "NEW" }) : null),
+      el("div", { class: "en", text: r.en }),
+      el("p", { text: r.tag }),
+      el("div", { class: "stg", text: r.stages.length ? "단계: " + r.stages.map(i => LIFE[i][0]).join(" · ") : "단계: 전사 지원" }))));
+}
+
+let lastRole = null;
+function openRole(id) {
+  const r = ROLE_BY_ID[id]; lastRole = id;
+  $("#role-head").replaceChildren(
+    el("h2", {}, r.name, r.isNew ? el("span", { class: "badge-new", text: "NEW" }) : null),
+    el("div", { class: "en", text: r.en }), el("p", { text: r.tag }));
+  renderLife($("#life-role"), r.stages);
+  const box = (title, items) => el("div", {}, el("h4", { text: title }), el("ul", {}, items.map(t => el("li", { text: t }))));
+  $("#role-quad").replaceChildren(
+    box("핵심 목표 & KPI", r.kpi), box("필요 역량", r.skills),
+    box("채용공고 속 신호", r.signals), box("명칭", r.titles));
+  const dl = el("div");
+  Object.entries(r.w).sort((a, b) => b[1] - a[1]).forEach(([d, w]) =>
+    dl.append(el("div", { class: "bar-row", style: "grid-template-columns:120px 1fr 40px" },
+      el("span", { text: DIMS[d].name }), el("div", { class: "bar" }, el("i", { style: `width:${(w / 3) * 100}%` })),
+      el("span", { class: "v small", text: ["", "●", "●●", "●●●"][w] }))));
+  $("#role-dims").replaceChildren(dl);
+  $("#role-sample").replaceChildren(el("div", { class: "sample" }, el("b", { text: r.sample[0] }), el("br"), r.sample[1]));
+  if (answers.every(Boolean)) {
+    const fit = rankRoles(answers).list.find(x => x.role.id === id);
+    $("#role-mine").textContent = `나의 일치도: ${fit.fit}%`;
+  } else $("#role-mine").textContent = "적합성 진단을 완료하면 이 직무와의 일치도가 표시됩니다.";
+  show("role");
+}
+$("#role-back").addEventListener("click", () => show("atlas"));
+
+/* ───────── 공고 해독기 ───────── */
+
+function kwRegex(k) {
+  const esc = k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  return /^[\x00-\x7f]+$/.test(k) ? new RegExp(`(?<![a-z0-9])${esc}(?![a-z0-9])`, "g") : new RegExp(esc, "g");
+}
+const KW_RE = ROLES.map(r => ({ role: r, res: r.kw.map(k => ({ k, re: kwRegex(k) })) }));
+
+function decode() {
+  const txt = $("#d-text").value.toLowerCase();
+  if (txt.trim().length < 20) { $("#d-out").hidden = true; return; }
+  const res = KW_RE.map(({ role, res }) => {
+    const hits = []; let score = 0;
+    res.forEach(({ k, re }) => { const m = txt.match(re); if (m) { hits.push(k); score += Math.min(m.length, 3); } });
+    return { role, score, hits };
+  }).sort((a, b) => b.score - a.score);
+  const max = Math.max(1, res[0].score);
+  $("#d-out").hidden = false;
+  $("#d-bars").replaceChildren(...res.filter(x => x.score > 0).slice(0, 6).map((x, i) =>
+    el("div", { style: "margin-bottom:10px" },
+      el("div", { class: "bar-row" + (i === 0 ? " top" : ""), style: "padding-bottom:0" },
+        el("button", { type: "button", onclick: () => openRole(x.role.id), text: x.role.name }),
+        el("div", { class: "bar" }, el("i", { style: `width:${(x.score / max) * 100}%` })),
+        el("span", { class: "v small", text: x.score + "점" })),
+      el("div", { class: "hits" }, "감지된 신호: ", x.hits.map(h => el("mark", { text: h }))))));
+  if (!res[0].score) {
+    $("#d-bars").replaceChildren(el("p", { text: "뚜렷한 직무 신호를 찾지 못했어요. 업무(Responsibilities) 항목까지 포함해 붙여넣어 보세요." }));
+    $("#d-note").textContent = "";
+  } else {
+    $("#d-note").textContent = res[0].role.id === "fde"
+      ? "※ FDE 공고의 약 30%는 세일즈 엔지니어 역할을 잘못 라벨링한 경우예요. 실제 코딩 비중을 꼭 확인하세요."
+      : "키워드 기반 추정입니다. 직무명(타이틀)보다 '업무 내용'에 어떤 단어가 많은지를 보는 연습용 도구예요.";
+  }
+}
+$("#d-text").addEventListener("input", decode);
+$("#d-examples").replaceChildren(...ROLES.filter(r => r.id !== "corp").map(r =>
+  el("button", { type: "button", onclick: () => { $("#d-text").value = r.sample[0] + "\n" + r.sample[1] + "\n" + r.signals.join(", ").replace(/"/g, ""); decode(); } }, r.name)));
+
+/* ───────── 시작 ───────── */
+
+function init() {
+  renderLife($("#life-home"), null);
+  renderAtlas();
+  loadSaved();
+  const h = location.hash.slice(1);
+  const shared = h.match(/^r=([1-5]{26})$/);
+  if (shared) {                       // 공유 링크로 들어온 경우: 보기 전용으로 결과 표시
+    answers = shared[1].split("").map(Number);
+    renderResult(); show("result", false); return;
+  }
+  if (h === "quiz") startOrResume();
+  else if (h === "result" && answers.every(Boolean)) { renderResult(); show("result", false); }
+  else if (VIEWS.includes(h) && !["quiz", "role", "result"].includes(h)) show(h, false);
+  else show("home", false);
+}
+init();
+</script>
+</body>
+</html>

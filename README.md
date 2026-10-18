@@ -90,3 +90,12 @@ wrangler pages dev            # http://localhost:8788
   인쇄 설정에서 "배경 그래픽"을 켜야 색이 나옵니다.
 - **교육 후 데이터 정리**: 관리자 화면에서 참여자별 삭제, 또는
   `wrangler d1 execute se-competency --remote --command="DELETE FROM sessions; DELETE FROM users;"`
+
+## 직무 적합성 진단 (`/job-fit/`)
+
+세미나 「AI 테크기업 직무 이해」 실습용 Self-Assessment. 순수 정적 페이지(`public/job-fit/index.html`) 하나로 동작하며 서버·DB가 필요 없습니다. 답변은 브라우저 localStorage에만 저장됩니다.
+
+- 26문항(13개 성향·역량 × 2) → 11개 직무 일치도, Top 3, 레이더 차트, 보완 포인트, 인쇄/PDF, 결과 링크 공유(`#r=26자리`)
+- 직무 도감: R&D·Product / 마케팅 / 영업 / Sales Operation / BD / 세일즈 엔지니어 / 컨설턴트 / 서포트 엔지니어 / CSM / FDE / Corporate(Back Office)
+- 공고 해독기: 채용공고 본문을 붙여넣으면 키워드 신호로 직무를 추정
+- 수정: 파일 상단 `DIMS`(차원), `QUESTIONS`(문항), `ROLES`(직무 정의·차원별 가중치 `w`·공고 키워드 `kw`)

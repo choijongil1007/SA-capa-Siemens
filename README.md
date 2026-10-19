@@ -1,4 +1,4 @@
-# SA 역량 진단 및 학습 우선순위
+# PreSales 역량 진단 및 학습 우선순위
 
 순수 HTML·JavaScript·CSS + Cloudflare Pages Functions + D1.
 

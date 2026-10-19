@@ -3,9 +3,9 @@
 window.EDITION = "siemens";
 
 window.APP_TEXT = {
-  title: "SA 역량 진단 및 학습 우선순위",
-  subtitle: "Solution Architect Competency Assessment & Development Priorities",
-  role: "SA",
+  title: "PreSales 역량 진단 및 학습 우선순위",
+  subtitle: "PreSales Competency Assessment & Development Priorities",
+  role: "PreSales",
 };
 
 // 평가 기준 (행동 기준)

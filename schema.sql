@@ -1,4 +1,4 @@
--- SA 역량 진단 앱 D1 스키마
+-- PreSales 역량 진단 앱 D1 스키마
 -- 적용: npx wrangler d1 execute se-competency --remote --file=./schema.sql
 
 CREATE TABLE IF NOT EXISTS users (

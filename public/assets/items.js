@@ -3,9 +3,9 @@
 // 항목 id를 바꾸거나 추가하면 lib/util.js 의 VALID_ITEM_IDS 도 같이 바꿔야 저장됩니다.
 
 window.APP_TEXT = {
-  title: "PreSales 역량 진단 및 학습 우선순위",
-  subtitle: "PreSales Competency Assessment & Development Priorities",
-  role: "PreSales",
+  title: "기술대표 역량 진단 및 학습 우선순위",
+  subtitle: "Technical Representative Competency Assessment",
+  role: "기술대표",
 };
 
 // 평가 기준 (행동 기준)

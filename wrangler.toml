@@ -30,4 +30,4 @@ workers_dev = true
 [[env.cudo.d1_databases]]
 binding = "DB"
 database_name = "se-competency-cudo"
-database_id = "REPLACE_WITH_CUDO_DATABASE_ID"   # npx wrangler d1 create se-competency-cudo 결과값
+database_id = "293c9f01-00d0-4353-9a07-8c5a2d7380e4"

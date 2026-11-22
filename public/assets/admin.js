@@ -61,7 +61,7 @@
       <div><div class="kpi-l">팀 평균 Gap</div><div class="kpi-v amber">${Math.round(ts.avgGap)}<span>점</span></div></div>`;
     renderLegend();
     $("heatWrap").innerHTML = heatmapHtml(ts, mode);
-    $("teamPrio").innerHTML = teamPrioHtml(ts, 20);
+    $("teamPrio").innerHTML = teamPrioHtml(ts, 25);
     renderUsers(ts);
   }
 
@@ -114,7 +114,7 @@
   function teamPrioHtml(ts, limit) {
     const list = ts.items.filter(i => i.n).sort((a, b) => b.avgGap - a.avgGap || b.importance - a.importance).slice(0, limit);
     if (!list.length) return `<tbody><tr><td class="muted">진단 결과가 쌓이면 표시됩니다.</td></tr></tbody>`;
-    const linkHead = window.EDITION === "siemens" ? "영향받는 SVS 단계" : "연결 교재";
+    const linkHead = "BSA 단계";
     return `<thead><tr><th>진단 항목</th><th class="c nowrap">중요도 → 팀 평균 · Gap</th><th>멘토 후보 (4~5점)</th><th class="c">권장 방식</th><th>${linkHead}</th></tr></thead>
       <tbody>${list.map((it, i) => {
         const distTip = it.dist.map((d, k) => `${k + 1}점 ${d}명`).join(", ");
@@ -123,7 +123,7 @@
           <td class="c nowrap">${it.importance} → ${it.avgCur.toFixed(1)} <span class="gap-chip ${gapClass(Math.round(it.avgGap))}" title="${esc(distTip)}">${Math.round(it.avgGap)}</span></td>
           <td class="mentor">${mentorHtml(it.mentors)}</td>
           <td class="c"><span class="tag ${it.method.cls}">${it.method.label}</span></td>
-          <td class="small">${esc(window.EDITION === "siemens" ? it.svs : it.base)}</td>
+          <td class="small">${esc(it.bsa)}</td>
         </tr>`;
       }).join("")}</tbody>`;
   }

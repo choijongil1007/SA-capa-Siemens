@@ -70,7 +70,7 @@
       .sort((a, b) => sortKey === "mine"
         ? gapMine(b.it) - gapMine(a.it) || b.s.avgGap - a.s.avgGap
         : b.s.avgGap - a.s.avgGap || b.it.importance - a.it.importance);
-    const linkHead = window.EDITION === "siemens" ? "영향받는 SVS 단계" : "연결 교재";
+    const linkHead = "BSA 단계";
     $("teamPrio").innerHTML = `
       <thead><tr><th>진단 항목</th><th class="cmp-col">점수 비교</th><th class="c nowrap">팀 Gap</th>${mine ? '<th class="c nowrap">내 Gap</th>' : ""}<th class="c">멘토 후보 (4~5점)</th><th class="c">권장 방식</th><th>${linkHead}</th></tr></thead>
       <tbody>${rows.map(({ it, s }, i) => {
@@ -92,7 +92,7 @@
           ${mine ? `<td class="c">${myGap === null ? '<span class="muted">-</span>' : `<span class="gap-chip ${gapClass(myGap)}">${myGap}</span>`}</td>` : ""}
           <td class="c">${mentorText(s.mentors)}</td>
           <td class="c"><span class="tag ${m.cls}">${m.label}</span></td>
-          <td class="small">${esc(window.EDITION === "siemens" ? it.svs : it.base)}</td>
+          <td class="small">${esc(it.bsa)}</td>
         </tr>`;
       }).join("")}</tbody>`;
   }

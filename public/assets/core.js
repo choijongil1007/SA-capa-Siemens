@@ -77,9 +77,7 @@
   }
 
   function linkText(item) {
-    return window.EDITION === "siemens"
-      ? `SVS: ${item.svs} · MEDDPICC: ${item.meddpicc}`
-      : `교재: ${item.base}`;
+    return `BSA: ${item.bsa} · ${item.skill}`;
   }
 
   function fmtDate(ms) {

@@ -15,3 +15,19 @@ database_id = "d77aaee8-b65e-49f9-87a9-02ddc508c546"
 
 # 어드민 비밀번호는 여기에 쓰지 말고 대시보드의 Variables and Secrets 에
 # ADMIN_PASSWORD (Secret) 로 등록하세요.
+
+# ─────────────────────────────────────────────────────────────
+# 고객사별 배포 (코드·기능은 같고, DB와 주소만 다릅니다)
+# 기본 환경(위) = 지멘스: npx wrangler deploy
+# 쿠도:            npx wrangler deploy --env cudo
+# 새 고객사를 추가할 때는 아래 블록을 복사해 이름과 DB만 바꾸세요.
+# DB 연결(d1_databases)은 환경 사이에 상속되지 않으니 반드시 따로 적어야 합니다.
+# ─────────────────────────────────────────────────────────────
+[env.cudo]
+name = "sa-capa-cudo"
+workers_dev = true
+
+[[env.cudo.d1_databases]]
+binding = "DB"
+database_name = "se-competency-cudo"
+database_id = "REPLACE_WITH_CUDO_DATABASE_ID"   # npx wrangler d1 create se-competency-cudo 결과값

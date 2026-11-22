@@ -29,7 +29,9 @@ wrangler.toml            배포 설정 (고객사별 환경과 D1 연결)
 
 Cloudflare **Workers**(정적 파일 assets + API) + **D1**입니다. 코드는 하나이고, 고객사(워크숍)마다 배포와 DB만 따로 둡니다.
 
-GitHub `main` 브랜치에 병합하면 Cloudflare Workers Builds가 기본 환경(지멘스)을 자동 배포합니다 (Production branch: `main`). 다른 고객사 환경은 아래 명령으로 배포합니다.
+GitHub `main` 브랜치에 올리면 Cloudflare Workers Builds가 고객사별 Worker를 각각 자동 배포합니다.
+- `sa-capa-siemens` Worker: Deploy command `npx wrangler deploy`, Production branch `main`
+- `sa-capa-cudo` Worker: Deploy command `npx wrangler deploy --env cudo`, Production branch `main`
 그래서 기능과 질문은 모든 고객사가 같고, 데이터는 고객사별 DB에 따로 저장됩니다.
 
 | 고객사 | 배포 이름 (주소) | D1 DB | 배포 명령 |
